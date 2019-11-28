@@ -27,4 +27,9 @@
 
     |V|S|C|Z|
     |---|---|---|---|
+
+    `Z` - Zero Flag  
+    `C` - Carry Flag  
+    `S` - Sign Flag  
+    `V` - Overflow Flag  
 *   
