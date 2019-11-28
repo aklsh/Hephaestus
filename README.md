@@ -25,5 +25,6 @@
 *   8 Internal Registers (R0 - R7)
 *   Status Register (SREG): 4 bits
 
-    ![Status Register](/sreg.png)
+    |V|S|C|Z|
+    |---|---|---|---|
 *   
