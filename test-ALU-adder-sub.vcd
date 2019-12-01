@@ -1,5 +1,5 @@
 $date
-	Fri Nov 29 09:15:14 2019
+	Fri Nov 29 13:38:16 2019
 $end
 $version
 	Icarus Verilog
@@ -9,21 +9,27 @@ $timescale
 $end
 $scope module testbench $end
 $var wire 8 ! reg_out [7:0] $end
-$var wire 4 " SREG [3:0] $end
-$var reg 8 # A [7:0] $end
-$var reg 8 $ B [7:0] $end
-$var reg 4 % function_select_lines [3:0] $end
+$var wire 1 " clk $end
+$var wire 4 # SREG [3:0] $end
+$var reg 8 $ A [7:0] $end
+$var reg 8 % B [7:0] $end
+$var reg 4 & function_select_lines [3:0] $end
+$scope module clok $end
+$var reg 1 " clk $end
+$upscope $end
 $scope module uut $end
-$var wire 4 & function_select_lines [3:0] $end
-$var wire 8 ' operandA [7:0] $end
-$var wire 8 ( operandB [7:0] $end
-$var reg 4 ) SREG [3:0] $end
-$var reg 8 * reg_out [7:0] $end
+$var wire 1 " clk $end
+$var wire 4 ' function_select_lines [3:0] $end
+$var wire 8 ( operandA [7:0] $end
+$var wire 8 ) operandB [7:0] $end
+$var reg 4 * SREG [3:0] $end
+$var reg 8 + reg_out [7:0] $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
 #0
 $dumpvars
+bx +
 bx *
 bx )
 bx (
@@ -32,87 +38,176 @@ bx &
 bx %
 bx $
 bx #
-bx "
+0"
 bx !
 $end
 #1
-b0 "
-b0 )
+b0 #
+b0 *
+1"
+#2
+0"
+#3
+1"
+#4
+0"
+#5
 b1111 !
-b1111 *
-b1 %
+b1111 +
+1"
 b1 &
-b1001 $
-b1001 (
-b110 #
-b110 '
-#6
-b110 "
-b110 )
-b11111101 !
-b11111101 *
-b10 %
-b10 &
+b1 '
+b1001 %
+b1001 )
 b110 $
 b110 (
-b11 #
-b11 '
-#11
-b11010001 !
-b11010001 *
-b110010 $
-b110010 (
-#16
-b1100 "
-b1100 )
-b11111100 !
-b11111100 *
-b1 %
-b1 &
-b1111101 $
-b1111101 (
-b1111111 #
-b1111111 '
-#21
-b0 "
-b0 )
-b10 !
-b10 *
-b10 %
+#6
+0"
+#7
+1"
+#8
+0"
+#9
+1"
+#10
+b110 #
+b110 *
+b11111101 !
+b11111101 +
+0"
 b10 &
-#26
-b1110 "
-b1110 )
-b11110111 !
-b11110111 *
-b10001000 $
-b10001000 (
-#31
-b0 "
-b0 )
-b100 !
-b100 *
-b11 %
-b11 &
-b10 $
-b10 (
-b1 #
-b1 '
-#36
-b0 %
-b0 &
-#41
-b1011101 !
-b1011101 *
+b10 '
 b110 %
+b110 )
+b11 $
+b11 (
+#11
+1"
+#12
+0"
+#13
+1"
+#14
+0"
+#15
+b1100 #
+b1100 *
+1"
+b11 &
+b11 '
+b1111101 %
+b1111101 )
+b1111111 $
+b1111111 (
+#16
+0"
+#17
+b11111100 !
+b11111100 +
+1"
+#18
+0"
+#19
+1"
+#20
+b110 #
+b110 *
+b11111111 !
+b11111111 +
+0"
+b100 &
+b100 '
+b10 %
+b10 )
+b1 $
+b1 (
+#21
+b11111110 !
+b11111110 +
+1"
+#22
+0"
+#23
+1"
+#24
+0"
+#25
+b0 #
+b0 *
+1"
+b0 &
+b0 '
+#26
+0"
+#27
+1"
+#28
+0"
+#29
+1"
+#30
+b1 #
+b1 *
+0"
+b101 &
+b101 '
+b101 %
+b101 )
+b101 $
+b101 (
+#31
+1"
+#32
+0"
+#33
+1"
+#34
+0"
+#35
+b0 #
+b0 *
+b1011101 !
+b1011101 +
+1"
 b110 &
-b1010101 $
-b1010101 (
-b1101 #
-b1101 '
-#46
+b110 '
+b1010101 %
+b1010101 )
+b1101 $
+b1101 (
+#36
+0"
+#37
+1"
+#38
+0"
+#39
+1"
+#40
 b101 !
-b101 *
-b111 %
+b101 +
+0"
 b111 &
-#51
+b111 '
+#41
+1"
+#42
+0"
+#43
+1"
+#44
+0"
+#45
+1"
+b1000 &
+b1000 '
+#46
+0"
+#47
+1"
+#48
+0"
+#49
+1"
+#50
+0"
