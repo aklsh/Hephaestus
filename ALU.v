@@ -26,10 +26,10 @@ module ALU (output reg[7:0] reg_out, output reg[3:0] SREG, input[3:0] function_s
                          SREG[3] = (~reg_out[7]&operandA[7]&operandB[7]) | (reg_out[7]&~operandA[7]&~operandB[7]);
                      end
             4'b0100: begin
-                         {SREG[1], reg_out} <= operandA-operandB-SREG[1];
-                         SREG[0] <= (reg_out === 0)?1:0;
-                         SREG[2] <= reg_out[7];
-                         SREG[3] <= (~reg_out[7]&operandA[7]&~operandB[7]) | (reg_out[7]&~operandA[7]&operandB[7]);
+                         {SREG[1], reg_out} = operandA-operandB-SREG[1];
+                         SREG[0] = (reg_out === 0)?1:0;
+                         SREG[2] = reg_out[7];
+                         SREG[3] = (~reg_out[7]&operandA[7]&~operandB[7]) | (reg_out[7]&~operandA[7]&operandB[7]);
                      end
             4'b0101: begin
                          SREG[0] <= ({operandA[7], operandA} <= {operandB[7], operandB})?1:0;
