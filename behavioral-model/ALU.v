@@ -47,6 +47,8 @@ module ALU (output reg[7:0] reg_out, output reg[3:0] SREG, input[3:0] function_s
                          reg_out = operandA&operandB;
                          SREG[0] = (reg_out === 0)?1:0;
                      end
+            4'b1000: begin
+                         
             default: begin
                          SREG <= 4'b0000;
                          reg_out <= reg_out;

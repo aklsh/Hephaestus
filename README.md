@@ -10,15 +10,21 @@
         *   `SUB A, B;`  ---> _out = A-B;_
         *   `ADDC A, B;` ---> _out = A+B+Carry;_
         *   `SUBC A, B;` ---> _out = A-B-Carry;_
-        *   `CMP A, B;` ---> _compare A, B;_
-        *   `OR A, B;` ---> _out = A|B;_
-        *   `AND A, B;` ---> _out = A&B;_
-        *   `LSR A, n;` ---> _A = A<<n;_
-        *   `RSR A, n;` ---> _A = A>>n;_
-        *   `NOT A;` ---> _out = ~A;_
         *   `XOR A, B;` ---> _out = A^B;_
+        *   `AND A, B;` ---> _out = A&B;_
+        *   `OR A, B;` ---> _out = A|B;_
+        *   `NAND A, B;` ---> _out = ~(A&B);_
+        *   `LLS A;` ---> _out = A<<1;_
+        *   `LRS A;` ---> _out = A>>1;_
+        *   `ALS A;` ---> _out = A<<1;_
+        *   `ARS A;` ---> _out = A>>1; sign retained_
+        *   `ROL A;` ---> _out = rotate left A;_
+        *   `ROR A;` ---> _out = rotate right A;_
+        *   `MUL A, B;` ---> _out = A*B; 16-bit output_
+        *   `CMP A, B;` ---> _compare A, B;_
+
     *   Memory Instructions:
-        *   `MOV A, B` ---> _A <== B;_
+        *   `MOV A, B` ---> _A <== B;_x
         *   `LDI A, n` ---> _Load A with value n;_
 *   PFC Instructions:
     *   `JMP X;` ---> _jump to line X unconditionally;_
