@@ -1,4 +1,4 @@
-module ALU_struct (output[7:0] mul_high, output[7:0] result, output[3:0] SREG, input[7:0] A, input[7:0] B, input[3:0] fsl);
+module ALU (output[7:0] mul_high, output[7:0] result, output[3:0] SREG, input[7:0] A, input[7:0] B, input[3:0] fsl);
 
     parameter ADD = 4'b0000;
     parameter SUB = 4'b0001;

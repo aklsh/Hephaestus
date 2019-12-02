@@ -11,7 +11,7 @@ module testbench;
         $dumpvars(0, testbench);
     end
 
-    ALU_struct uut (mul_high, reg_out, SREG, A, B, function_select_lines);
+    ALU uut (mul_high, reg_out, SREG, A, B, function_select_lines);
 
     initial begin
         #5 A = 6; B = 9; function_select_lines = 1;
