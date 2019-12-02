@@ -1,4 +1,4 @@
-module multiplexer16to1 (output reg[7:0] out, input[7:0] in0, in1, in2, in3, in4, in5, in6, in7, in8, in9, in10, in11, in12, in13, in14, in15, input[3:0] sel);
+module multiplexer16to1 (output [7:0] out, input[7:0] in0, in1, in2, in3, in4, in5, in6, in7, in8, in9, in10, in11, in12, in13, in14, in15, input[3:0] sel);
     wire[7:0] mux0Out, mux1Out, mux2Out, mux3Out;
 
     multiplexer4to1 mux0 (mux0Out, in0, in1, in2, in3, sel[1:0]);

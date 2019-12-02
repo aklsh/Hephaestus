@@ -1,7 +1,8 @@
 module testbench;
 
     wire[3:0] SREG;
-    wire[15:0] reg_out;
+    wire[7:0] reg_out;
+    wire[7:0] mul_high;
     reg[7:0] A, B;
     reg[3:0] function_select_lines;
 
@@ -10,7 +11,7 @@ module testbench;
         $dumpvars(0, testbench);
     end
 
-    ALU_struct uut (reg_out[15:8], reg_out[7:0], SREG, A, B, function_select_lines);
+    ALU_struct uut (mul_high, reg_out, SREG, A, B, function_select_lines);
 
     initial begin
         #5 A = 6; B = 9; function_select_lines = 1;
