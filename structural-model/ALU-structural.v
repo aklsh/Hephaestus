@@ -46,8 +46,8 @@ module ALU_struct (output[7:0] mul_high, output[7:0] result, output[3:0] SREG, i
     wire[7:0] mulu_out_high, mulu_out_low;
     multiplier mulu({mul_out_high, mulu_out_low}, A, B);
 
-    wire compare_out;
-    comparator cmpu(compare_out, A, B);
+    wire cmpu_out;
+    comparator cmpu(cmpu_out, A, B);
 
-    multiplexer16to1 muxResult(result, asu_sum, bsu_out, lu_out, mulu_out_low, fsl);
+    multiplexer16to1 muxResult(result, asu_sum, asu_sum, asu_sum, asu_sum, lu_out, lu_out, lu_out, lu_out, bsu_out, bsu_out, bsu_out, bsu_out, ru_out, ru_out, mulu_out_low, cmpu_out, fsl);
 endmodule
