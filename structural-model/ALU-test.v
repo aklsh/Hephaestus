@@ -4,15 +4,13 @@ module testbench;
     wire[15:0] reg_out;
     reg[7:0] A, B;
     reg[3:0] function_select_lines;
-    wire clk;
 
     initial begin
         $dumpfile("test.vcd");
         $dumpvars(0, testbench);
     end
 
-    clock clok(clk);
-    ALU_struct uut (reg_out[15:8], reg_out[7:0], SREG, function_select_lines, A, B, clk);
+    ALU_struct uut (reg_out[15:8], reg_out[7:0], SREG, A, B, function_select_lines);
 
     initial begin
         #5 A = 6; B = 9; function_select_lines = 1;
