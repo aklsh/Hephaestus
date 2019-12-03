@@ -24,7 +24,7 @@
         *   `CMP A, B;` ---> _compare A, B;_
 
     *   Memory Instructions:
-        *   `MOV A, B` ---> _A <== B;_x
+        *   `MOV A, B` ---> _A <== B;_x_
         *   `LDI A, n` ---> _Load A with value n;_
 *   PFC Instructions:
     *   `JMP X;` ---> _jump to line X unconditionally;_
