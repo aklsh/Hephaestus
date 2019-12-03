@@ -1,3 +1,15 @@
+`include "ALU-structural.v"
+`include "adder-subtractor.v"
+`include "barrel-shifter.v"
+`include "comparator.v"
+`include "FA.v"
+`include "HA.v"
+`include "logic-unit.v"
+`include "multiplier.v"
+`include "mux4to1.v"
+`include "mux16to1.v"
+`include "rotator.v"
+
 module testbench;
 
     wire[3:0] SREG;
@@ -23,6 +35,8 @@ module testbench;
         #5 A = 13; B = 85; function_select_lines = 6;
         #5 function_select_lines = 7;
         #5 function_select_lines = 8;
+        #5 A = 120;
+        #5 function_select_lines = 14;
         #5 $finish;
     end
 endmodule
