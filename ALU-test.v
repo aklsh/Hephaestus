@@ -1,4 +1,4 @@
-`include "ALU-structural.v"
+`include "ALU.v"
 `include "adder-subtractor.v"
 `include "barrel-shifter.v"
 `include "comparator.v"
@@ -9,9 +9,11 @@
 `include "mux4to1.v"
 `include "mux16to1.v"
 `include "rotator.v"
+`include "clock.v"
 
 module testbench;
 
+    wire clk;
     wire[3:0] SREG;
     wire[7:0] reg_out;
     wire[7:0] mul_high;
@@ -23,7 +25,8 @@ module testbench;
         $dumpvars(0, testbench);
     end
 
-    ALU uut (mul_high, reg_out, SREG, A, B, function_select_lines);
+    clock clok (clk);
+    ALU uut (mul_high, reg_out, SREG, A, B, function_select_lines, clk);
 
     initial begin
         #5 A = 6; B = 9; function_select_lines = 1;
