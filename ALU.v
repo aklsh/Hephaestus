@@ -1,4 +1,4 @@
-module ALU (output reg[7:0] mul_high, output reg[7:0] result, output reg[3:0] SREG, input[7:0] A, input[7:0] B, input[3:0] fsl, input clk);
+module ALU (output reg[7:0] mul_high, output reg[7:0] result, output[3:0] SREG, input[7:0] A, input[7:0] B, input[3:0] fsl, input clk);
 
 /*******************
     4-BIT OPCODES
@@ -35,13 +35,11 @@ module ALU (output reg[7:0] mul_high, output reg[7:0] result, output reg[3:0] SR
                        i.e., result cannot be fit into 8 bits.
 
 ***************************************************************************************/
-    always @ (posedge clk) begin
-        SREG[0] <= (fsl === COMPARE)?cmpu_out:((result === 0)?1:0);
-        SREG[2] <= (fsl === MULTIPLY)?mul_high[7]:result[7];
-        SREG[1] <= (fsl[3:2] === 2'b00)?asu_carry:((fsl[3:2] === 2'b10)?bsu_carry:0);
-        SREG[3] <= (fsl === ADD | fsl === SUB)?asu_overflow:0;
-        mul_high <= (fsl === MULTIPLY)?mulu_out_high:0;
-    end
+
+        assign SREG[0] = (fsl === COMPARE)?cmpu_out:((result === 0)?1:0);
+        assign SREG[2] = (fsl === MULTIPLY)?mul_high[7]:result[7];
+        assign SREG[1] = (fsl[3:2] === 2'b00)?asu_carry:((fsl[3:2] === 2'b10)?bsu_carry:0);
+        assign SREG[3] = (fsl === ADD | fsl === SUB)?asu_overflow:0;
 
 /***************************************************************************************
     ADDER cum SUBTRACTOR
@@ -100,5 +98,6 @@ module ALU (output reg[7:0] mul_high, output reg[7:0] result, output reg[3:0] SR
 
     always @ (posedge clk) begin
         result <= result_continuous;
+        mul_high <= (fsl === MULTIPLY)?mulu_out_high:0;
     end
 endmodule
