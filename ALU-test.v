@@ -29,19 +29,30 @@ module testbench;
     ALU uut (mul_high, reg_out, SREG, A, B, function_select_lines, clk);
 
     initial begin
-        #5 A = 6; B = 9; function_select_lines = 1;
-        #2 A = 3; B = 6; function_select_lines = 2;
-        #2 A = 127; B = 125; function_select_lines = 3;
-        #2 A = 1; B = 2; function_select_lines = 4;
-        #2 function_select_lines = 0;
-        #2 A = 5; B = 5; function_select_lines = 5;
-        #2 A = 13; B = 85; function_select_lines = 6;
-        #2 function_select_lines = 7;
-        #2 function_select_lines = 8;
-        #2 A = 120;
-        #2 function_select_lines = 14;
-        #2 A = 5; B = 5; function_select_lines = 5;
-        #2 A = 5; B = 5; function_select_lines = 3;
-        #6 $finish;
+        #5;
+         A = 6; B = 9; function_select_lines = 1;
+        #2;
+         A = 3; B = 6; function_select_lines = 2;
+        #2;
+         A = 127; B = 125; function_select_lines = 3;
+        #2;
+         A = 1; B = 2; function_select_lines = 4;
+        #2;
+         function_select_lines = 0;
+        #2;
+         A = 5; B = 5; function_select_lines = 5;
+        #2;
+         A = 13; B = 85; function_select_lines = 6;
+        #2;
+         function_select_lines = 7;
+        #2;
+         function_select_lines = 8;
+        #2;
+         A = 120;
+        #2;
+         A = -1; B = -2; function_select_lines = 14;
+        #20;
+        #2 A = 5; B = 5; function_select_lines = 15;
+        #4 $finish;
     end
 endmodule

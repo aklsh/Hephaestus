@@ -36,10 +36,12 @@ module ALU (output reg[7:0] mul_high, output reg[7:0] result, output[3:0] SREG, 
 
 ***************************************************************************************/
 
-        assign SREG[0] = (fsl === COMPARE)?cmpu_out:((result === 0)?1:0);
+
+        assign SREG[0] = (fsl === COMPARE)?cmpu_out:((fsl === MULTIPLY & ({mul_high, result} === 16'b0))?1:0);
         assign SREG[2] = (fsl === MULTIPLY)?mul_high[7]:result[7];
         assign SREG[1] = (fsl[3:2] === 2'b00)?asu_carry:((fsl[3:2] === 2'b10)?bsu_carry:0);
-        assign SREG[3] = (fsl === ADD | fsl === SUB)?asu_overflow:0;
+        assign SREG[3] = (fsl[3:2] === 2'b00)?asu_overflow:0;
+
 
 /***************************************************************************************
     ADDER cum SUBTRACTOR
@@ -85,7 +87,7 @@ module ALU (output reg[7:0] mul_high, output reg[7:0] result, output[3:0] SREG, 
     MULTIPLIER
 *****************/
     wire[7:0] mulu_out_high, mulu_out_low;
-    multiplier mulu({mulu_out_high, mulu_out_low}, A, B);
+    multiplier mulu({mulu_out_high, mulu_out_low}, A, B, clk);
 
 /****************
     COMPARATOR
@@ -97,7 +99,6 @@ module ALU (output reg[7:0] mul_high, output reg[7:0] result, output[3:0] SREG, 
     multiplexer16to1 muxResult(result_continuous, asu_sum, asu_sum, asu_sum, asu_sum, lu_out, lu_out, lu_out, lu_out, bsu_out, bsu_out, bsu_out, bsu_out, ru_out, ru_out, mulu_out_low, 8'b0, fsl);
 
     always @ (posedge clk) begin
-        result <= result_continuous;
-        mul_high <= (fsl === MULTIPLY)?mulu_out_high:0;
+        {mul_high, result} <= {mulu_out_high&{8{fsl === MULTIPLY}}, result_continuous};
     end
 endmodule
