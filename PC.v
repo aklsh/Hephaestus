@@ -1,16 +1,18 @@
-module PC (output reg[7:0] pCounter, input jump_en, input[7:0] jump_line_num, input clk, input hold);
+module PC (output reg[7:0] pCounterOut, input[7:0] pCounterIn, jumpLine, input jump, hold, clk);
     initial begin
-        pCounter = 8'b0;
+        pCounterOut = 8'b0;
     end
 
     always @ (posedge clk) begin
-        if(jump_en)
-            pCounter <= jump_line_num;
+        if (hold === 1)
+            pCounterOut<=pCounterIn;
         else begin
-            if (hold === 1)
-                pCounter <= pCounter+8'b0;
-            else if (hold === 2 | hold === 0)
-                pCounter <= pCounter+8'b1;
+            if (reset === 1)
+                pCounterOut<=8'b0;
+            if (jump === 1)
+                pCounterOut<=jumpLine;
+            else
+                pCounterOut<=pCounterIn+1'b1;
         end
     end
 endmodule

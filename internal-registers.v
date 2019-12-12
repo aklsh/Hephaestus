@@ -1,4 +1,5 @@
-module GPR (output reg[7:0] GPR[7:0], output[7:0] readFromReg, input read_en, input write_en, input[7:0] writeToReg, input[2:0] reg_num, input clk);
+module GPRs (output[7:0] regA_out, regB_out, input readEn, writeEn, input[7:0] regC_in, input[2:0] regA_num, regB_num, regC_num, input clk);
+    reg[7:0] GPR[7:0];
     initial begin
         GPR[0] = 8'b0;
         GPR[1] = 8'b0;
@@ -11,9 +12,11 @@ module GPR (output reg[7:0] GPR[7:0], output[7:0] readFromReg, input read_en, in
     end
 
     always @ (posedge clk) begin
-        if (read_en)
-            readFromReg <= GPR[reg_num];
-        else if (write_en)
-            GPR[reg_num] <= writeToReg;
+        if (readEn) begin
+            regA_out <= GPR[regA_num];
+            regB_out <= GPR[regB_num];
+        end
+        else if (writeEn)
+            GPR[regC_num] <= regC_in;
     end
 endmodule
