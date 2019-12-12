@@ -26,7 +26,7 @@ module testbench;
     end
 
     clock clok (clk);
-    ALU uut (mul_high, reg_out, SREG, A, B, function_select_lines, clk);
+    ALU uut (mul_high, reg_out, SREG, A, B, function_select_lines);
 
     initial begin
         #5;
@@ -50,9 +50,13 @@ module testbench;
         #2;
          A = 120;
         #2;
-         A = -1; B = -2; function_select_lines = 14;
-        #20;
-        #2 A = 5; B = 5; function_select_lines = 15;
+         function_select_lines = 21;
+        #2;
+         A = 127; B = -3; function_select_lines = 14;
+        #2;
+         A = 5; B = 5; function_select_lines = 15;
+        #2;
+         function_select_lines = 20;
         #4 $finish;
     end
 endmodule

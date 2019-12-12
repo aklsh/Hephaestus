@@ -1,4 +1,4 @@
-module ALU (output reg[7:0] mul_high, output reg[7:0] result, output[3:0] SREG, input[7:0] A, input[7:0] B, input[3:0] fsl, input clk);
+module ALU (output reg[7:0] mul_high, output reg[7:0] result, output reg[3:0] SREG, input[7:0] A, input[7:0] B, input[3:0] fsl);
 
 /*******************
     4-BIT OPCODES
@@ -36,12 +36,12 @@ module ALU (output reg[7:0] mul_high, output reg[7:0] result, output[3:0] SREG, 
 
 ***************************************************************************************/
 
-
-        assign SREG[0] = (fsl === COMPARE)?cmpu_out:((fsl === MULTIPLY & ({mul_high, result} === 16'b0))?1:0);
-        assign SREG[2] = (fsl === MULTIPLY)?mul_high[7]:result[7];
-        assign SREG[1] = (fsl[3:2] === 2'b00)?asu_carry:((fsl[3:2] === 2'b10)?bsu_carry:0);
-        assign SREG[3] = (fsl[3:2] === 2'b00)?asu_overflow:0;
-
+    always @(mul_high, result) begin
+        SREG[0] = (fsl === COMPARE)?cmpu_out:((fsl === MULTIPLY & ({mul_high, result} === 16'b0))?1:0);
+        SREG[2] = (fsl === MULTIPLY)?mul_high[7]:result[7];
+        SREG[1] = (fsl[3:2] === 2'b00)?asu_carry:((fsl[3:2] === 2'b10)?bsu_carry:0);
+        SREG[3] = (fsl[3:2] === 2'b00)?asu_overflow:0;
+    end
 
 /***************************************************************************************
     ADDER cum SUBTRACTOR
@@ -87,7 +87,7 @@ module ALU (output reg[7:0] mul_high, output reg[7:0] result, output[3:0] SREG, 
     MULTIPLIER
 *****************/
     wire[7:0] mulu_out_high, mulu_out_low;
-    multiplier mulu({mulu_out_high, mulu_out_low}, A, B, clk);
+    multiplier mulu({mulu_out_high, mulu_out_low}, A, B);
 
 /****************
     COMPARATOR
@@ -96,9 +96,9 @@ module ALU (output reg[7:0] mul_high, output reg[7:0] result, output[3:0] SREG, 
     comparator cmpu(cmpu_out, A, B);
 
     wire[7:0] result_continuous;
-    multiplexer16to1 muxResult(result_continuous, asu_sum, asu_sum, asu_sum, asu_sum, lu_out, lu_out, lu_out, lu_out, bsu_out, bsu_out, bsu_out, bsu_out, ru_out, ru_out, mulu_out_low, 8'b0, fsl);
+    multiplexer16to1 muxResult(result_continuous, asu_sum, asu_sum, asu_sum, asu_sum, lu_out, lu_out, lu_out, lu_out, bsu_out, bsu_out, bsu_out, bsu_out, ru_out, ru_out, mulu_out_low, result, fsl[3:0]);
 
-    always @ (posedge clk) begin
-        {mul_high, result} <= {mulu_out_high&{8{fsl === MULTIPLY}}, result_continuous};
+    always @ (*) begin
+        {mul_high, result} = {(mulu_out_high&{8{fsl===MULTIPLY}}), result_continuous};
     end
 endmodule
