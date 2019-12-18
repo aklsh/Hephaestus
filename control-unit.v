@@ -1,75 +1,88 @@
-module CU (output[7:0] pc, output [7:0] resultALU, output[3:0] SREG, input clk);
+module CU (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG, input clk);
     wire[5:0] opcode;
     reg[2:0] state;
 
-    assign opcode = instruction[15:10];
     assign pc = pcCurrent;
+    assign resultALU = {mulHighALU, resultALULow};
 
+    assign opcode = instruction[15:10];
+
+    //PC
     wire[7:0] pcNext;
+    reg[7:0] pcCurrent, jumpLine;
+    reg jump, hold, clk;
     PC programCounter (pcNext, pcCurrent, jumpLine, jump, hold, clk);
 
+    //GPR
+    wire[7:0] regAData, regBData;
+    reg[7:0] regCIn;
+    reg[2:0] regANum, regBNum, regCNum;
+    reg readEn, writeEn;
+    GPRs registerFile (regAData, regBData, readEn, writeEn, regCIn, mulHighIn, regANum, regBNum, regCNum, clk);
 
-    GPRs registerFile ();
+    //ALU
+    wire[7:0] mulHighALU, resultALULow;
+    wire[3:0] aluSREG;
+    reg[7:0] operandA, operandB;
+    reg[3:0] aluFSL;
+    ALU alu (mulHighALU, resultALULow, aluSREG, operandA, operandB, aluFSL);
 
+    //Instruction Memory
+    wire[15:0] instruction;
+    instructionMemory iMEM (instruction, pcCurrent);
 
-    ALU alu ();
+    //Data Memory
+    wire[7:0] memOut;
+    reg[7:0] memIn;
+    reg[2:0] lineNumber;
+    reg memRead, memWrite;
+    dataMemory dMEM (memOut, memIn, lineNumber, memRead, memWrite, clk);
 
-
-    instructionMemory iMEM ();
-
-
-    dataMemory dMEM ();
-
-
-    wire[2:0] regA, regB;
     always @ (posedge clk) begin
         case(opcode[5:4]) begin
             2'b00:  //ALU
+                regANum = instruction[9:7];
+                regBNum = instruction[6:4];
+                regCNum = instruction[3:1];
                 aluFSL = opcode[3:0];
                 case(state)
-                    3'b000: begin      //read ra, rb from Instructions
+                    3'b000: begin      //read both operands from instruction
                       hold=1;
-                      RA=1;
+                      readEn=1;
+                      writeEn=0;
                       state=state+1;
                     end
-                    3'b001: begin      //latency
+                    3'b001: begin      //set up ALU parameters
+                      readEn=0;
+                      operandA=regAData;
+                      operandB=regBData;
                       state=state+1;
                     end
-                    3'b010: begin      //set up ALU parameters
-                      RA=0;
-                      a=ra_data;
-                      b=rb_data;
+                    3'b010: begin      //allow ALU to process
+                      regCIn=resultALULow;
+                      mulHighIn=mulHighALU;
                       state=state+1;
                     end
-                    3'b011: begin      //allow ALU to process
-                      rd_data=result;
-                      state=state+1;
-                      WR=1;
-                    end
-                    3'b100: begin        //write to register
-                      WR=1;
+                    3'b011: begin        //write to register
+                      writeEn=1;
                       state=state+1;
                     end
-                    3'b101: begin
-                      WR=0;
-                      rd=3'd0;
+                    3'b100: begin       //update flags
+                      writeEn=0;
+                      SREG=aluSREG;
                       state=state+1;
                     end
-                    3'b110: begin        //write to register
-                      //WR=1;
-                      rd_data={7'd0,carry};
-                      state=state+1;
+                    3'b101: begin        //latency
+                      state=0;
                       hold=0;
                     end
-                    3'b111: begin        //latency
-                      WR=0;
-                      state=0;
-                      hold=1;
-                    end
                 endcase
-            2'b01:  //Load and Store - immediate, direct, indirect
+            2'b01:  //Load - immediate, direct, indirect
+                case(opcode[3:0]) begin
+
+                endcase
             2'b10:  //Branch
-            2'b11:  //
+            2'b11:  //MOV
         endcase
         pcCurrent <= pcNext;
     end
