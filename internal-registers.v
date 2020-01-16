@@ -1,4 +1,4 @@
-module GPRs (output[7:0] regA_out, regB_out, input readEn, writeEn, input[7:0] regC_in, mulHighIn input[2:0] regA_num, regB_num, regC_num, input clk);
+module GPRs (output reg[7:0] regA_out, regB_out, input readEn, writeEn, input[7:0] regC_in, mulHighIn, input[2:0] regA_num, regB_num, regC_num, input clk);
     reg[7:0] GPR[7:0];
     reg[7:0] mulHigh;
     initial begin

@@ -7,8 +7,6 @@ module PC (output reg[7:0] pCounterOut, input[7:0] pCounterIn, jumpLine, input j
         if (hold === 1)
             pCounterOut<=pCounterIn;
         else begin
-            if (reset === 1)
-                pCounterOut<=8'b0;
             if (jump === 1)
                 pCounterOut<=jumpLine;
             else

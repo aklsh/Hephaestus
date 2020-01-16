@@ -1,6 +1,14 @@
+`include "ALU.v"
+`include "PC.v"
+`include "data-memory.v"
+`include "instruction-memory.v"
+`include "internal-registers.v"
+`include "clock.v"
+
 module CU (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG, input clk);
     wire[5:0] opcode;
-    reg[2:0] state;
+    reg[2:0] state, regNum;
+    reg[7:0] immediateValue;
 
     assign pc = pcCurrent;
     assign resultALU = {mulHighALU, resultALULow};
@@ -10,37 +18,38 @@ module CU (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG, input c
     //PC
     wire[7:0] pcNext;
     reg[7:0] pcCurrent, jumpLine;
-    reg jump, hold, clk;
-    PC programCounter (pcNext, pcCurrent, jumpLine, jump, hold, clk);
+    reg jump, hold;
 
     //GPR
     wire[7:0] regAData, regBData;
-    reg[7:0] regCIn;
+    reg[7:0] regCIn, mulHighIn;
     reg[2:0] regANum, regBNum, regCNum;
     reg readEn, writeEn;
-    GPRs registerFile (regAData, regBData, readEn, writeEn, regCIn, mulHighIn, regANum, regBNum, regCNum, clk);
 
     //ALU
     wire[7:0] mulHighALU, resultALULow;
     wire[3:0] aluSREG;
     reg[7:0] operandA, operandB;
     reg[3:0] aluFSL;
-    ALU alu (mulHighALU, resultALULow, aluSREG, operandA, operandB, aluFSL);
 
     //Instruction Memory
     wire[15:0] instruction;
-    instructionMemory iMEM (instruction, pcCurrent);
 
     //Data Memory
     wire[7:0] memOut;
     reg[7:0] memIn;
     reg[2:0] lineNumber;
     reg memRead, memWrite;
+
     dataMemory dMEM (memOut, memIn, lineNumber, memRead, memWrite, clk);
+    instructionMemory iMEM (instruction, pcCurrent);
+    ALU alu (mulHighALU, resultALULow, aluSREG, operandA, operandB, aluFSL);
+    GPRs registerFile (regAData, regBData, readEn, writeEn, regCIn, mulHighIn, regANum, regBNum, regCNum, clk);
+    PC programCounter (pcNext, pcCurrent, jumpLine, jump, hold, clk);
 
     always @ (posedge clk) begin
-        case(opcode[5:4]) begin
-            2'b00:  //ALU
+        case(opcode[5:4])
+            2'b00:  begin //ALU
                 regANum = instruction[9:7];
                 regBNum = instruction[6:4];
                 regCNum = instruction[3:1];
@@ -63,7 +72,7 @@ module CU (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG, input c
                       mulHighIn=mulHighALU;
                       state=state+1;
                     end
-                    3'b011: begin        //write to register
+                    3'b011: begin        //write result to register
                       writeEn=1;
                       state=state+1;
                     end
@@ -76,17 +85,37 @@ module CU (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG, input c
                       state=0;
                       hold=0;
                     end
+                    default: state=0;
                 endcase
-            2'b01:  //Load - immediate, direct, indirect
-                case(opcode[3:0]) begin
+                end
+            2'b01:  begin //Load - immediate, direct, indirect
+                case(opcode[3:0])
+                    4'b0001: begin //immediate
+                        immediateValue = instruction[10:3]; //can load from 0-255
+                        regNum = instruction[2:0];
+                        case(state)
+                            3'b000: begin
+                                regCIn=immediateValue;
+                                writeEn=0;
+                                readEn=0;
+                                hold=1;
+                                state=state+1;
+                            end
+                            3'b001: begin
+                                regCNum=regNum;
 
+                            end
+                        endcase
+                    end
                 endcase
-            2'b10:  //Branch
-            2'b11:  //MOV
+            end
+            2'b10:  begin //Branch Instructions
+            end
+            2'b11:  begin //outlier instructions - MOV, NOP
+            end
         endcase
         pcCurrent <= pcNext;
     end
-
 endmodule
 /*
 4'b0000: begin      //ALU direct data processing
