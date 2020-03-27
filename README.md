@@ -18,8 +18,8 @@
     *   `NAND out, A, B;` ---> _out = ~(A&B);_
     *   `LLS out, A;` ---> _out = A<<1;_
     *   `LRS out, A;` ---> _out = A>>1;_
-    *   `ALS out, A;` ---> _out = A<<1;_
-    *   `ARS out, A;` ---> _out = A>>1; sign retained_
+    *   `ALS out, A;` ---> _out = A<<<1;_
+    *   `ARS out, A;` ---> _out = A>>>1;_
     *   `ROL out, A;` ---> _out = rotate left A_
     *   `ROR out, A;` ---> _out = rotate right A_
     *   `MUL out, A, B;` ---> _out = A*B; 16-bit output_
@@ -30,6 +30,7 @@
     *   `LDI A, n` ---> _Load regA with value n;_
     *   `LDR A, B` ---> _regA <== data[regB];_
     *   `LD A, Addr` ---> _regA <== data[Addr];_
+    *	`ST Addr, A` ---> _data[Addr] <== regA_
 
 *   PFC Instructions:
     *   `JMP X;` ---> _jump to line X unconditionally;_

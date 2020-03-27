@@ -1,14 +1,14 @@
 module dataMemory (output reg[7:0] memOut, input[7:0] memIn, input[2:0] lineNumber, input memRead, memWrite, clk);
-    reg[7:0] dMemory[7:0];
+    reg[7:0] dMEM[127:0];
 
     initial begin
-        $readmemb("dataMemory.txt", dMemory);
+        $readmemb("dataMemory.txt", dMEM);
     end
 
     always @ (posedge clk) begin
         if (memWrite)
-            dMemory[lineNumber] <= memIn;
+            dMEM[lineNumber] <= memIn;
         if (memRead)
-            memOut <= dMemory[lineNumber];
+            memOut <= dMEM[lineNumber];
     end
 endmodule
