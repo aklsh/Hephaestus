@@ -1,14 +1,4 @@
 `include "ALU.v"
-`include "adder-subtractor.v"
-`include "barrel-shifter.v"
-`include "comparator.v"
-`include "FA.v"
-`include "HA.v"
-`include "logic-unit.v"
-`include "multiplier.v"
-`include "mux4to1.v"
-`include "mux16to1.v"
-`include "rotator.v"
 `include "clock.v"
 
 module testbench;
