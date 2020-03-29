@@ -18,7 +18,7 @@ module GPRs (output reg[7:0] regA_out, regB_out, input readEn, writeEn, input[7:
             regA_out <= GPR[regA_num];
             regB_out <= GPR[regB_num];
         end
-        else if (writeEn) begin
+        if (writeEn) begin
             GPR[regC_num] <= regC_in;
             mulHigh <= mulHighIn;
         end

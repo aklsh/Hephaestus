@@ -5,10 +5,12 @@
 `include "internal-registers.v"
 `include "clock.v"
 
-module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG, input clk);
+module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 	wire[5:0] opcode;
 	reg[2:0] state, regNum;
 	reg[7:0] immediateValue;
+    wire clk;
+    integer i;
 
 	assign pc = pcCurrent;
 	assign resultALU = {mulHighALU, resultALULow};
@@ -46,6 +48,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG, 
 	ALU alu (mulHighALU, resultALULow, aluSREG, operandA, operandB, aluFSL);
 	GPRs registerFile (regAData, regBData, readEn, writeEn, regCIn, mulHighIn, regANum, regBNum, regCNum, clk);
 	PC programCounter (pcNext, pcCurrent, jumpLine, jump, hold, clk);
+    clock clkModule (clk);
 
 	initial begin
 		memRead=0;
@@ -56,6 +59,12 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG, 
 		jump=0;
 		hold=0;
 		state=0;
+        $dumpfile("processor.vcd");
+        $dumpvars(0, processor);
+        for (i=0;i<8;i=i+1) begin
+            $dumpvars(0, processor.registerFile.GPR[i]);
+        end
+        #1000 $finish;
 	end
 
 
@@ -101,9 +110,9 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG, 
 				endcase
 			end
 			2'b01:  begin //Load - immediate, direct, indirect || Store
-				case(opcode[3:0])
-					4'b0001: begin //immediate
-						regCIn = instruction[9:3]; //can load from 0-127
+				case(opcode[3:2])
+					2'b00: begin //immediate
+						regCIn = instruction[10:3]; //can load from 0-255
 						regCNum = instruction[2:0];
 						case(state)
 							3'b000: begin	//setup value to be loaded
@@ -127,7 +136,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG, 
 							default: state=0;
 						endcase
 					end
-					4'b0010: begin //direct
+					2'b01: begin //direct
 						regCNum = instruction[9:7];
 						regANum = instruction[6:4];
 						case(state)
@@ -161,7 +170,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG, 
 							default: state=0;
 						endcase
 					end
-					4'b0100: begin //indirect
+					2'b10: begin //indirect
 						regBNum = instruction[9:7];
 						regCNum = instruction[6:4];
 						case(state)
@@ -205,7 +214,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG, 
 							default: state=0;
 						endcase
 					end
-					4'b1000: begin //store
+					2'b11: begin //store
 						lineNumber=instruction[9:3];
 						regANum=instruction[2:0];
 						case(state)
