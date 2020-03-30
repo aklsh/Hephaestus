@@ -1,4 +1,4 @@
-# Quesadilla
+# Hephaestus
 
 An 8-bit microprocessor.
 
