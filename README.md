@@ -3,7 +3,7 @@
 An _intuitive_ 8-Bit microprocessor.  
 
 <p align="center">
-    <a target="_blank" rel="noopener noreferrer"><img width="300" src="./hephaestus.png" alt="Hephaestus Logo"></a>
+    <a target="_blank" rel="noopener noreferrer"><img width="500" src="./hephaestus.png" alt="Hephaestus Logo"></a>
 <br></p>
 
 ### Specifications:
@@ -14,7 +14,7 @@ An _intuitive_ 8-Bit microprocessor.
 *   256 8-bit lines in memory.
 
 *   #### ALU Instructions:
-    *   `ADD out, A, B;` ---> _out := A+B;_
+    *   `ADD out, A, B;` ---> _out = A+B;_
     *   `SUB out, A, B;`  ---> _out = A-B;_
     *   `ADDC out, A, B;` ---> _out = A+B+Carry;_
     *   `SUBC out, A, B;` ---> _out = A-B-Carry;_

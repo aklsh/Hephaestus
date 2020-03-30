@@ -44,7 +44,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 	reg memRead, memWrite;
 
 	dataMemory dMEM (memOut, memIn, lineNumber, memRead, memWrite, clk);
-	instructionMemory iMEM (instruction, pcCurrent);
+	instructionMemory iMEM (instruction, pcCurrent, clk);
 	ALU alu (mulHighALU, resultALULow, aluSREG, operandA, operandB, aluFSL);
 	GPRs registerFile (regAData, regBData, readEn, writeEn, regCIn, mulHighIn, regANum, regBNum, regCNum, clk);
 	PC programCounter (pcNext, pcCurrent, jumpLine, jump, hold, clk);
@@ -64,7 +64,9 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
         for (i=0;i<8;i=i+1) begin
             $dumpvars(0, processor.registerFile.GPR[i]);
         end
-        #1000 $finish;
+        #1000
+        $writememb("GPR.txt", processor.registerFile.GPR);
+        $finish;
 	end
 
 
