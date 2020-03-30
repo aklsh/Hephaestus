@@ -1,7 +1,10 @@
 # Hephaestus
 
 An _intuitive_ 8-Bit microprocessor.  
-![Hephaestus](hephaestus.png)
+
+<p align="center">
+    <a target="_blank" rel="noopener noreferrer"><img width="300" src="./hephaestus.png" alt="Hephaestus Logo"></a>
+<br></p>
 
 ### Specifications:
 *   1 Byte (8 bits) data
