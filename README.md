@@ -1,4 +1,6 @@
-# 8-bit Microprocessor implementation in Verilog
+# Quesadilla
+
+An 8-bit microprocessor.
 
 ### Specifications:
 *   1 Byte (8 bits) data
