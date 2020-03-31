@@ -1,8 +1,7 @@
-module instructionMemory (output reg[15:0] instruction, input[7:0] line, input clk);
+module instructionMemory (output [15:0] instruction, input[7:0] line, input clk);
     reg[15:0] iMEM[0:255]; // 256 lines of 16-bit instructions
 
-    initial $readmemb("/Users/akileshkannan/Desktop/muP-verilog/instructionMemory.txt", iMEM);
+    initial $readmemb("./instructionMemory.txt", iMEM);
 
-    always @(posedge clk)
-        instruction <= iMEM[line];
+    assign instruction = iMEM[line];
 endmodule

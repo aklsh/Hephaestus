@@ -49,7 +49,7 @@ module ALU (output reg[7:0] mul_high, output reg[7:0] result, output reg[3:0] SR
 ***************************************************************************************/
 
     always @(mul_high, result) begin
-        SREG[0] = (fsl === COMPARE)?cmpu_out:((fsl === MULTIPLY & ({mul_high, result} === 16'b0))?1:0);
+        SREG[0] = (fsl === COMPARE)?cmpu_out:((fsl === MULTIPLY & ({mul_high, result} === 16'b0))?1:(result===0)?1:0);
         SREG[2] = (fsl === MULTIPLY)?mul_high[7]:result[7];
         SREG[1] = (fsl[3:2] === 2'b00)?asu_carry:((fsl[3:2] === 2'b10)?bsu_carry:0);
         SREG[3] = (fsl[3:2] === 2'b00)?asu_overflow:0;

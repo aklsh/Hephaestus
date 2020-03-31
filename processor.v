@@ -5,6 +5,8 @@
 `include "internal-registers.v"
 `include "clock.v"
 
+`default_nettype none
+
 module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 	wire[5:0] opcode;
 	reg[2:0] state, regNum;
@@ -46,7 +48,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 	dataMemory dMEM (memOut, memIn, lineNumber, memRead, memWrite, clk);
 	instructionMemory iMEM (instruction, pcCurrent, clk);
 	ALU alu (mulHighALU, resultALULow, aluSREG, operandA, operandB, aluFSL);
-	GPRs registerFile (regAData, regBData, readEn, writeEn, regCIn, mulHighIn, regANum, regBNum, regCNum, clk);
+	GPRs registerFile (regAData, regBData, readEn, writeEn, regCIn, mulHighALU, regANum, regBNum, regCNum, clk);
 	PC programCounter (pcNext, pcCurrent, jumpLine, jump, hold, clk);
     clock clkModule (clk);
 
@@ -57,7 +59,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 		readEn=0;
 		writeEn=0;
 		jump=0;
-		hold=0;
+		hold=1;
 		state=0;
         $dumpfile("processor.vcd");
         $dumpvars(0, processor);
@@ -76,37 +78,42 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 				regBNum = instruction[6:4];
 				regCNum = instruction[3:1];
 				aluFSL = opcode[3:0];
+                jump=0;
 				case(state)
 					3'b000: begin      //read both operands from instruction
 						hold=1;
-						readEn=1;
+						readEn=0;
 						writeEn=0;
 						state=state+1;
 					end
 					3'b001: begin      //set up ALU parameters
-						readEn=0;
-						operandA=regAData;
-						operandB=regBData;
+						readEn=1;
 						state=state+1;
 					end
 					3'b010: begin      //allow ALU to process
+						operandA=regAData;
+						operandB=regBData;
+                        readEn=0;
+						state=state+1;
+					end
+					3'b011: begin        //write result to register
 						regCIn=resultALULow;
 						mulHighIn=mulHighALU;
 						state=state+1;
 					end
-					3'b011: begin        //write result to register
+					3'b100: begin       //update flags
 						writeEn=1;
 						state=state+1;
 					end
-					3'b100: begin       //update flags
+					3'b101: begin        //latency
 						writeEn=0;
 						SREG=aluSREG;
 						state=state+1;
 					end
-					3'b101: begin        //latency
-						state=0;
-						hold=0;
-					end
+                    3'b110: begin
+                        hold=0;
+                        state=0;
+                    end
 					default: state=0;
 				endcase
 			end
@@ -115,10 +122,11 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 					2'b00: begin //immediate
 						regCIn = instruction[10:3]; //can load from 0-255
 						regCNum = instruction[2:0];
+                        jump=0;
 						case(state)
 							3'b000: begin	//setup value to be loaded
-								writeEn=0;
-								readEn=0;
+						        writeEn=0;
+						        readEn=0;
 								hold=1;
 								state=state+1;
 							end
@@ -140,6 +148,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 					2'b01: begin //direct
 						regCNum = instruction[9:7];
 						regANum = instruction[6:4];
+                        jump=0;
 						case(state)
 							3'b000: begin	//setup
 								writeEn=0;
@@ -174,6 +183,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 					2'b10: begin //indirect
 						regBNum = instruction[9:7];
 						regCNum = instruction[6:4];
+                        jump=0;
 						case(state)
 							3'b000: begin
 								hold=1;
@@ -218,6 +228,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 					2'b11: begin //store
 						lineNumber=instruction[9:3];
 						regANum=instruction[2:0];
+                        jump=0;
 						case(state)
 							3'b000: begin
 								writeEn=0;
@@ -257,26 +268,47 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
                 case(opcode[3:0])
                     4'b1000: begin //unconditional
                         jumpLine = instruction[9:2];
-                        jump = 0;
-                        case(state)
-                            3'b000: begin
-                                hold=1;
-                                jump=1;
-                                state=state+1;
-                            end
-                            3'b001: begin
-                                jump=0;
-                                hold=0;
-                                state=0;
-                            end
-                            default: state=0;
-                        endcase
+                        jump=1;
                     end
+                    4'b0000: begin //ZS
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[0]===1)?1:0;
+                    end
+                    4'b0001: begin //ZC
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[0]===0)?1:0;
+                    end
+                    4'b0010: begin //CS
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[1]===1)?1:0;
+                    end
+                    4'b0011: begin //CC
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[1]===0)?1:0;
+                    end
+                    4'b0100: begin //SS
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[2]===1)?1:0;
+                    end
+                    4'b0101: begin //SC
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[2]===0)?1:0;
+                    end
+                    4'b0110: begin //VS
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[3]===1)?1:0;
+                    end
+                    4'b0111: begin //VC
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[3]===0)?1:0;
+                    end
+                    default: jump=0;
                 endcase
 			end
 			2'b11:  begin //MOV
                 memRead=0;
                 memWrite=0;
+                jump=0;
                 case(state)
                     3'b000: begin
                         hold=1;
