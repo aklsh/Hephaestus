@@ -265,6 +265,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 				endcase
 			end
 			2'b10:  begin //Branch Instructions
+                hold=0;
                 case(opcode[3:0])
                     4'b1000: begin //unconditional
                         jumpLine = instruction[9:2];

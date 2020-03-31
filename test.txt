@@ -1,7 +1,7 @@
 LDI 34 R1 #0
 LDI 45 R3 #1
 SUB R3 R3 R2 #2
-JMPZS skipped #3
+JMPZC skipped #3
 LDI 23 R2 #4
 ST 29 R2 #5
 skipped: ST 32 R3 #6
