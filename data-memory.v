@@ -1,5 +1,5 @@
 module dataMemory (output reg[7:0] memOut, input[7:0] memIn, input[6:0] lineNumber, input memRead, memWrite, clk);
-    reg[7:0] dMEM[127:0];
+    reg[7:0] dMEM[0:127];
 
     integer i;
     initial begin

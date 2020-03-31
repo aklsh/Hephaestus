@@ -4,7 +4,7 @@ module PC (output reg[7:0] pCounterOut, input[7:0] pCounterIn, jumpLine, input j
     end
 
     always @ (posedge clk) begin
-        if (hold === 1)
+        if ((hold === 1) && (jump === 0))
             pCounterOut<=pCounterIn;
         else begin
             if (jump === 1)

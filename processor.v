@@ -61,11 +61,10 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 		state=0;
         $dumpfile("processor.vcd");
         $dumpvars(0, processor);
-        for (i=0;i<8;i=i+1) begin
-            $dumpvars(0, processor.registerFile.GPR[i]);
-        end
+
         #1000
         $writememb("GPR.txt", processor.registerFile.GPR);
+        $writememb("dMEM.txt", processor.dMEM.dMEM);
         $finish;
 	end
 
@@ -148,24 +147,24 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 								hold=1;
 								state=state+1;
 							end
-							3'b001: begin
+							3'b001: begin  // read data in register
 								readEn=1;
 								state=state+1;
 							end
-							3'b010: begin
+							3'b010: begin  // disable read; setup data which is to be written
 								regCIn=regAData;
 								readEn=0;
 								state=state+1;
 							end
-							3'b011: begin
+							3'b011: begin  // write the data to register.
 								writeEn=1;
 								state=state+1;
 							end
-							3'b100: begin
+							3'b100: begin  // disable write
 								writeEn=0;
 								state=state+1;
 							end
-							3'b101: begin
+							3'b101: begin  // latency
 								hold=0;
 								state=0;
 							end
@@ -255,6 +254,25 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 				endcase
 			end
 			2'b10:  begin //Branch Instructions
+                case(opcode[3:0])
+                    4'b1000: begin //unconditional
+                        jumpLine = instruction[9:2];
+                        jump = 0;
+                        case(state)
+                            3'b000: begin
+                                hold=1;
+                                jump=1;
+                                state=state+1;
+                            end
+                            3'b001: begin
+                                jump=0;
+                                hold=0;
+                                state=0;
+                            end
+                            default: state=0;
+                        endcase
+                    end
+                endcase
 			end
 			2'b11:  begin //MOV
                 memRead=0;

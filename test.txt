@@ -1,5 +1,9 @@
-label: ADD R1 R2 R3
+ADD R1 R2 R3
 SUB R2 R2 R7
 MOV 32 64
 LDI 45 R3
 LDR R2 R3
+LD R2 R3
+JMP label
+ST 29 R2
+label: ST 45 R2
