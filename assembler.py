@@ -20,25 +20,25 @@ def getMachineCode(line):
     if lineTokens[0] in ALUInstructions:
         machineCode = '00'+ ALUOpcode[lineTokens[0]]
         if lineTokens[0] not in ['LLS', 'LRS', 'ALS', 'ARS', 'ROL', 'ROR', 'CMP']:
-            machineCode += "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))+ "{}".format(format(int(lineTokens[3][1]), '03b'))+ 'x'
+            machineCode += "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))+ "{}".format(format(int(lineTokens[3][1]), '03b'))+ '0'
         elif lineTokens[0] == 'CMP':
-            machineCode = '001111' + "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b')) + 'xxxx'
+            machineCode = '001111' + "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b')) + '0000'
         else:
-            machineCode += "{}".format(format(int(lineTokens[1][1]), '03b')) +'xxx' + "{}".format(format(int(lineTokens[2][1]), '03b'))+'x'
+            machineCode += "{}".format(format(int(lineTokens[1][1]), '03b')) +'000' + "{}".format(format(int(lineTokens[2][1]), '03b'))+'0'
         print(machineCode)
 
     elif lineTokens[0] in memInstructions:
-        machineCode = '01'+ memOpcode[lineTokens[0]]+ 'x'
+        machineCode = '01'+ memOpcode[lineTokens[0]]+ '0'
         if lineTokens[0] == 'LDI':
             machineCode += "{}".format(format(int(lineTokens[1]), '08b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))
         if lineTokens[0] == 'LDR' or lineTokens[0] == 'LD':
-            machineCode += 'x'+ "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))+ 'xxxx'
+            machineCode += '0'+ "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))+ '0000'
         if lineTokens[0] == 'ST':
-            machineCode += 'x'+ "{}".format(format(int(lineTokens[1]), '07b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))
+            machineCode += '0'+ "{}".format(format(int(lineTokens[1]), '07b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))
         print(machineCode)
 
     elif lineTokens[0] in branchInstructions:
-        machineCode = '10' + branchOpcode[lineTokens[0]] + "{}".format(format(labels.index(lineTokens[1]), '08b')) + 'xx'
+        machineCode = '10' + branchOpcode[lineTokens[0]] + "{}".format(format(labels.index(lineTokens[1]), '08b')) + '00'
         print(machineCode)
     elif lineTokens[0] == 'MOV':
         machineCode = '11'+ "{}".format(format(int(lineTokens[1]), '07b'))+ "{}".format(format(int(lineTokens[2]), '07b'))

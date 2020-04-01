@@ -62,6 +62,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 		state=0;
         $dumpfile("processor.vcd");
         $dumpvars(0, processor);
+        $dumpvars(0, processor.registerFile.GPR[0], processor.registerFile.GPR[1], processor.registerFile.GPR[2], processor.registerFile.GPR[3], processor.registerFile.GPR[4], processor.registerFile.GPR[5], processor.registerFile.GPR[6], processor.registerFile.GPR[7]);
 
         #50000
         $writememb("GPR.txt", processor.registerFile.GPR);
@@ -350,6 +351,6 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
                 endcase
 			end
 		endcase
-		pcCurrent <= pcNext;
+		pcCurrent = pcNext;
 	end
 endmodule
