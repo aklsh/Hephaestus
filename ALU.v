@@ -108,7 +108,7 @@ module ALU (output reg[7:0] mul_high, output reg[7:0] result, output reg[3:0] SR
     comparator cmpu(cmpu_out, A, B);
 
     wire[7:0] result_continuous;
-    multiplexer16to1 muxResult(result_continuous, asu_sum, asu_sum, asu_sum, asu_sum, lu_out, lu_out, lu_out, lu_out, bsu_out, bsu_out, bsu_out, bsu_out, ru_out, ru_out, mulu_out_low, result, fsl[3:0]);
+    multiplexer16to1 muxResult(result_continuous, asu_sum, asu_sum, asu_sum, asu_sum, lu_out, lu_out, lu_out, lu_out, bsu_out, bsu_out, bsu_out, bsu_out, ru_out, ru_out, mulu_out_low, 8'b1, fsl[3:0]);
 
     always @ (*) begin
         {mul_high, result} = {(mulu_out_high&{8{fsl===MULTIPLY}}), result_continuous};

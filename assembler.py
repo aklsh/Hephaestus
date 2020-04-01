@@ -18,21 +18,27 @@ def getMachineCode(line):
         lineTokens.remove(getLabel(line)+':')
 
     if lineTokens[0] in ALUInstructions:
-        machineCode = '00'+ ALUOpcode[lineTokens[0]]+ "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))+ "{}".format(format(int(lineTokens[3][1]), '03b'))+ '0'
+        machineCode = '00'+ ALUOpcode[lineTokens[0]]
+        if lineTokens[0] not in ['LLS', 'LRS', 'ALS', 'ARS', 'ROL', 'ROR', 'CMP']:
+            machineCode += "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))+ "{}".format(format(int(lineTokens[3][1]), '03b'))+ 'x'
+        elif lineTokens[0] == 'CMP':
+            machineCode = '001111' + "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b')) + 'xxxx'
+        else:
+            machineCode += "{}".format(format(int(lineTokens[1][1]), '03b')) +'xxx' + "{}".format(format(int(lineTokens[2][1]), '03b'))+'x'
         print(machineCode)
 
     elif lineTokens[0] in memInstructions:
-        machineCode = '01'+ memOpcode[lineTokens[0]]+ '0'
+        machineCode = '01'+ memOpcode[lineTokens[0]]+ 'x'
         if lineTokens[0] == 'LDI':
             machineCode += "{}".format(format(int(lineTokens[1]), '08b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))
         if lineTokens[0] == 'LDR' or lineTokens[0] == 'LD':
-            machineCode += '0'+ "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))+ '0000'
+            machineCode += 'x'+ "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))+ 'xxxx'
         if lineTokens[0] == 'ST':
-            machineCode += '0'+ "{}".format(format(int(lineTokens[1]), '07b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))
+            machineCode += 'x'+ "{}".format(format(int(lineTokens[1]), '07b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))
         print(machineCode)
 
     elif lineTokens[0] in branchInstructions:
-        machineCode = '10' + branchOpcode[lineTokens[0]] + "{}".format(format(labels.index(lineTokens[1]), '08b')) + '00'
+        machineCode = '10' + branchOpcode[lineTokens[0]] + "{}".format(format(labels.index(lineTokens[1]), '08b')) + 'xx'
         print(machineCode)
     elif lineTokens[0] == 'MOV':
         machineCode = '11'+ "{}".format(format(int(lineTokens[1]), '07b'))+ "{}".format(format(int(lineTokens[2]), '07b'))
@@ -99,10 +105,11 @@ for line in ASMLines:
 
 machineCodes = []
 for line in ASMLines:
+    print(line)
     machineCodes.append(getMachineCode(line))
 
 with open('instructionMemory.txt', 'w') as f:
     for machineCode in machineCodes:
         f.write(machineCode+'\n')
-    for i in range(0, 128-len(ASMLines)):
+    for i in range(0, 256-len(ASMLines)):
         f.write('xxxxxxxxxxxxxxxx'+'\n')

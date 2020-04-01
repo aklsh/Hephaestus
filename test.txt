@@ -1,7 +1,11 @@
-LDI 34 R1 #0
-LDI 45 R3 #1
-SUB R3 R3 R2 #2
-JMPZC skipped #3
-LDI 23 R2 #4
-ST 29 R2 #5
-skipped: ST 32 R3 #6
+LDI 1 R3 #constant 1
+LDI 0 R4 #constant 0
+LDI 0 R0 #a[0]
+LDI 1 R1 #a[1]
+LDI 25 R6 #n
+addTerms: ADD R1 R0 R2
+LDR R0 R1
+LDR R1 R2
+SUB R6 R3 R6
+CMP R6 R4
+JMPZC addTerms

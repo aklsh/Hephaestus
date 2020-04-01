@@ -12,7 +12,6 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 	reg[2:0] state, regNum;
 	reg[7:0] immediateValue;
     wire clk;
-    integer i;
 
 	assign pc = pcCurrent;
 	assign resultALU = {mulHighALU, resultALULow};
@@ -64,7 +63,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
         $dumpfile("processor.vcd");
         $dumpvars(0, processor);
 
-        #1000
+        #50000
         $writememb("GPR.txt", processor.registerFile.GPR);
         $writememb("dMEM.txt", processor.dMEM.dMEM);
         $finish;
@@ -80,32 +79,35 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 				aluFSL = opcode[3:0];
                 jump=0;
 				case(state)
-					3'b000: begin      //read both operands from instruction
+					3'b000: begin
 						hold=1;
 						readEn=0;
 						writeEn=0;
 						state=state+1;
 					end
-					3'b001: begin      //set up ALU parameters
+					3'b001: begin
 						readEn=1;
 						state=state+1;
 					end
-					3'b010: begin      //allow ALU to process
+					3'b010: begin
 						operandA=regAData;
 						operandB=regBData;
                         readEn=0;
 						state=state+1;
 					end
-					3'b011: begin        //write result to register
+					3'b011: begin
 						regCIn=resultALULow;
 						mulHighIn=mulHighALU;
 						state=state+1;
 					end
-					3'b100: begin       //update flags
-						writeEn=1;
+					3'b100: begin
+					    if (aluFSL == 4'b1111)
+                            writeEn=0;
+                        else
+                            writeEn=1;
 						state=state+1;
 					end
-					3'b101: begin        //latency
+					3'b101: begin
 						writeEn=0;
 						SREG=aluSREG;
 						state=state+1;
@@ -118,11 +120,13 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 				endcase
 			end
 			2'b01:  begin //Load - immediate, direct, indirect || Store
-				case(opcode[3:2])
+                jump=0;
+                case(opcode[3:2])
 					2'b00: begin //immediate
 						regCIn = instruction[10:3]; //can load from 0-255
 						regCNum = instruction[2:0];
                         jump=0;
+                        hold=1;
 						case(state)
 							3'b000: begin	//setup value to be loaded
 						        writeEn=0;
@@ -231,6 +235,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
                         jump=0;
 						case(state)
 							3'b000: begin
+                                jump=0;
 								writeEn=0;
 								readEn=0;
 								hold=1;
@@ -265,43 +270,43 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 				endcase
 			end
 			2'b10:  begin //Branch Instructions
-                hold=0;
+                hold=1;
                 case(opcode[3:0])
                     4'b1000: begin //unconditional
-                        jumpLine = instruction[9:2];
-                        jump=1;
+                        jumpLine <= instruction[9:2];
+                        jump <= 1;
                     end
                     4'b0000: begin //ZS
-                        jumpLine = instruction[9:2];
-                        jump = (SREG[0]===1)?1:0;
+                        jumpLine <= instruction[9:2];
+                        jump <= (SREG[0]===1)?1:0;
                     end
                     4'b0001: begin //ZC
-                        jumpLine = instruction[9:2];
-                        jump = (SREG[0]===0)?1:0;
+                        jumpLine <= instruction[9:2];
+                        jump <= (SREG[0]===0)?1:0;
                     end
                     4'b0010: begin //CS
-                        jumpLine = instruction[9:2];
-                        jump = (SREG[1]===1)?1:0;
+                        jumpLine <= instruction[9:2];
+                        jump <= (SREG[1]===1)?1:0;
                     end
                     4'b0011: begin //CC
-                        jumpLine = instruction[9:2];
-                        jump = (SREG[1]===0)?1:0;
+                        jumpLine <= instruction[9:2];
+                        jump <= (SREG[1]===0)?1:0;
                     end
                     4'b0100: begin //SS
-                        jumpLine = instruction[9:2];
-                        jump = (SREG[2]===1)?1:0;
+                        jumpLine <= instruction[9:2];
+                        jump <= (SREG[2]===1)?1:0;
                     end
                     4'b0101: begin //SC
-                        jumpLine = instruction[9:2];
-                        jump = (SREG[2]===0)?1:0;
+                        jumpLine <= instruction[9:2];
+                        jump <= (SREG[2]===0)?1:0;
                     end
                     4'b0110: begin //VS
-                        jumpLine = instruction[9:2];
-                        jump = (SREG[3]===1)?1:0;
+                        jumpLine <= instruction[9:2];
+                        jump <= (SREG[3]===1)?1:0;
                     end
                     4'b0111: begin //VC
-                        jumpLine = instruction[9:2];
-                        jump = (SREG[3]===0)?1:0;
+                        jumpLine <= instruction[9:2];
+                        jump <= (SREG[3]===0)?1:0;
                     end
                     default: jump=0;
                 endcase

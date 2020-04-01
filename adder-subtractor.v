@@ -2,6 +2,6 @@ module adderSubtractor (output Overflow, Carry, output[7:0] sum, input[7:0] A, i
     wire[7:0] B_feed;
     assign B_feed = (sel)?(~B+1):B;
 
-    assign {Carry, sum} = (sel)?(A + B_feed - Cin):(A + B_feed + Cin);
+    assign {Carry, sum} = (sel)?(A - B - Cin):(A + B + Cin);
     assign Overflow = (~sum[7]&A[7]&B_feed[7]) | (sum[7]&~A[7]&~B_feed[7]);
 endmodule
