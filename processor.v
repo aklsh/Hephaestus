@@ -78,8 +78,6 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 				regBNum = instruction[6:4];
 				regCNum = instruction[3:1];
 				aluFSL = opcode[3:0];
-                readEn=0;
-                writeEn=0;
                 jump=0;
 				case(state)
 					3'b000: begin
@@ -104,11 +102,8 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 						state=state+1;
 					end
 					3'b100: begin
-					    if (aluFSL == 4'b1111)
-                            writeEn=0;
-                        else
-                            writeEn=1;
-						state=state+1;
+						writeEn = (aluFSL===4'b1111)?0:1;
+                        state=state+1;
 					end
 					3'b101: begin
 						writeEn=0;
