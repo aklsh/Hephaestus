@@ -1,13 +1,13 @@
-`include "adder-subtractor.v"
-`include "barrel-shifter.v"
-`include "comparator.v"
-`include "FA.v"
-`include "HA.v"
-`include "logic-unit.v"
-`include "multiplier.v"
-`include "mux4to1.v"
-`include "mux16to1.v"
-`include "rotator.v"
+`include "ALU units/adder-subtractor.v"
+`include "ALU units/barrel-shifter.v"
+`include "ALU units/comparator.v"
+`include "ALU units/FA.v"
+`include "ALU units/HA.v"
+`include "ALU units/logic-unit.v"
+`include "ALU units/multiplier.v"
+`include "ALU units/mux4to1.v"
+`include "ALU units/mux16to1.v"
+`include "ALU units/rotator.v"
 
 
 module ALU (output reg[7:0] mul_high, output reg[7:0] result, output reg[3:0] SREG, input[7:0] A, input[7:0] B, input[3:0] fsl);

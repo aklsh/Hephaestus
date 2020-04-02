@@ -1,4 +1,4 @@
-module GPRs (output reg[7:0] regA_out, regB_out, input readEn, writeEn, input[7:0] regC_in, mulHighIn, input[2:0] regA_num, regB_num, regC_num, input clk);
+module GPRs (output reg[7:0] regA_out, regB_out, input readEn, writeEn, input[7:0] regC_in, mulHighIn, input[2:0] regA_num, regB_num, regC_num);
     reg[7:0] GPR[0:7];
     reg[7:0] mulHigh;
     initial begin
@@ -13,7 +13,7 @@ module GPRs (output reg[7:0] regA_out, regB_out, input readEn, writeEn, input[7:
         mulHigh = 8'b0;
     end
 
-    always @ (posedge clk) begin
+    always @ (*) begin
         if (readEn) begin
             regA_out <= GPR[regA_num];
             regB_out <= GPR[regB_num];

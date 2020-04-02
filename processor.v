@@ -41,13 +41,13 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 	//Data Memory
 	wire[7:0] memOut;
 	reg[7:0] memIn;
-	reg[6:0] lineNumber;
+	reg[7:0] lineNumber;
 	reg memRead, memWrite;
 
-	dataMemory dMEM (memOut, memIn, lineNumber, memRead, memWrite, clk);
-	instructionMemory iMEM (instruction, pcCurrent, clk);
+	dataMemory dMEM (memOut, memIn, lineNumber, memRead, memWrite);
+	instructionMemory iMEM (instruction, pcCurrent);
 	ALU alu (mulHighALU, resultALULow, aluSREG, operandA, operandB, aluFSL);
-	GPRs registerFile (regAData, regBData, readEn, writeEn, regCIn, mulHighALU, regANum, regBNum, regCNum, clk);
+	GPRs registerFile (regAData, regBData, readEn, writeEn, regCIn, mulHighALU, regANum, regBNum, regCNum);
 	PC programCounter (pcNext, pcCurrent, jumpLine, jump, hold, clk);
     clock clkModule (clk);
 
@@ -71,7 +71,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 	end
 
 
-	always @ (posedge clk, instruction) begin
+	always @ (posedge clk or instruction) begin
 		case(opcode[5:4])
 			2'b00:  begin //ALU
 				regANum = instruction[9:7];
@@ -119,6 +119,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 			end
 			2'b01:  begin //Load - immediate, direct, indirect || Store
                 jump=0;
+                hold=1;
                 case(opcode[3:2])
 					2'b00: begin //immediate
 						regCIn = instruction[10:3]; //can load from 0-255
@@ -228,15 +229,13 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 						endcase
 					end
 					2'b11: begin //store
-						lineNumber=instruction[9:3];
+						lineNumber=instruction[10:3];
 						regANum=instruction[2:0];
                         jump=0;
 						case(state)
 							3'b000: begin
-                                jump=0;
 								writeEn=0;
 								readEn=0;
-								hold=1;
 								memRead=0;
 								memWrite=0;
 								state=state+1;
@@ -268,43 +267,44 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 				endcase
 			end
 			2'b10:  begin //Branch Instructions
-                hold=1;
+                state=0;
+                hold=0;
                 case(opcode[3:0])
                     4'b1000: begin //unconditional
-                        jumpLine <= instruction[9:2];
-                        jump <= 1;
+                        jumpLine = instruction[9:2];
+                        jump = 1;
                     end
                     4'b0000: begin //ZS
-                        jumpLine <= instruction[9:2];
-                        jump <= (SREG[0]===1)?1:0;
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[0]===1)?1:0;
                     end
                     4'b0001: begin //ZC
-                        jumpLine <= instruction[9:2];
-                        jump <= (SREG[0]===0)?1:0;
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[0]===0)?1:0;
                     end
                     4'b0010: begin //CS
-                        jumpLine <= instruction[9:2];
-                        jump <= (SREG[1]===1)?1:0;
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[1]===1)?1:0;
                     end
                     4'b0011: begin //CC
-                        jumpLine <= instruction[9:2];
-                        jump <= (SREG[1]===0)?1:0;
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[1]===0)?1:0;
                     end
                     4'b0100: begin //SS
-                        jumpLine <= instruction[9:2];
-                        jump <= (SREG[2]===1)?1:0;
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[2]===1)?1:0;
                     end
                     4'b0101: begin //SC
-                        jumpLine <= instruction[9:2];
-                        jump <= (SREG[2]===0)?1:0;
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[2]===0)?1:0;
                     end
                     4'b0110: begin //VS
-                        jumpLine <= instruction[9:2];
-                        jump <= (SREG[3]===1)?1:0;
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[3]===1)?1:0;
                     end
                     4'b0111: begin //VC
-                        jumpLine <= instruction[9:2];
-                        jump <= (SREG[3]===0)?1:0;
+                        jumpLine = instruction[9:2];
+                        jump = (SREG[3]===0)?1:0;
                     end
                     default: jump=0;
                 endcase

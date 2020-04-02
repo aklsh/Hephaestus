@@ -34,7 +34,7 @@ def getMachineCode(line):
         if lineTokens[0] == 'LDR' or lineTokens[0] == 'LD':
             machineCode += '0'+ "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))+ '0000'
         if lineTokens[0] == 'ST':
-            machineCode += '0'+ "{}".format(format(int(lineTokens[1]), '07b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))
+            machineCode += "{}".format(format(int(lineTokens[1]), '08b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))
         print(machineCode)
 
     elif lineTokens[0] in branchInstructions:

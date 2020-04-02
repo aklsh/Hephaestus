@@ -1,4 +1,4 @@
-module dataMemory (output reg[7:0] memOut, input[7:0] memIn, input[6:0] lineNumber, input memRead, memWrite, clk);
+module dataMemory (output reg[7:0] memOut, input[7:0] memIn, input[7:0] lineNumber, input memRead, memWrite);
     reg[7:0] dMEM[0:255];
 
     integer i;
@@ -8,7 +8,7 @@ module dataMemory (output reg[7:0] memOut, input[7:0] memIn, input[6:0] lineNumb
         end
     end
 
-    always @ (posedge clk) begin
+    always @ (*) begin
         if (memWrite)
             dMEM[lineNumber] <= memIn;
         if (memRead)
