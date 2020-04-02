@@ -71,13 +71,15 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 	end
 
 
-	always @ (posedge clk) begin
+	always @ (posedge clk, instruction) begin
 		case(opcode[5:4])
 			2'b00:  begin //ALU
 				regANum = instruction[9:7];
 				regBNum = instruction[6:4];
 				regCNum = instruction[3:1];
 				aluFSL = opcode[3:0];
+                readEn=0;
+                writeEn=0;
                 jump=0;
 				case(state)
 					3'b000: begin
@@ -202,7 +204,7 @@ module processor (output[7:0] pc, output[15:0] resultALU, output reg[3:0] SREG);
 							end
 							3'b010: begin
 								readEn=0;
-								lineNumber=regBData[6:0];
+								lineNumber=regBData;
 								memRead=0;
 								state=state+1;
 							end
