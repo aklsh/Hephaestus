@@ -5,111 +5,99 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--input", default='input.txt')
 args = parser.parse_args()
 
+BIN = lambda n, b : format(int(n), '0' + str(b) + 'b') # Converts numbers to binary with zeros before
+INSTRUCTION_LENGTH = 16
+
 inputFile = args.input
 
 ASMLines = []
+labels = {}
 with open (inputFile, 'r') as f:
-    for line in f.readlines():
-        ASMLines.append(line.split('#')[0].split('\n')[0])
+    for number, line in enumerate(f.readlines()):
+        line = line.split('#')[0].split('\n')[0] # Remove comments and \n
+        if ':' in line:
+            label, line = line.split(': ')
+            labels[label] = number
+        ASMLines.append(line)
 
 def getMachineCode(line):
-    lineTokens = line.split()
-    if(getLabel(line)):
-        lineTokens.remove(getLabel(line)+':')
+    tokens = line.split(':')[-1].split() # Remove branch label
 
-    if lineTokens[0] in ALUInstructions:
-        machineCode = '00'+ ALUOpcode[lineTokens[0]]
-        if lineTokens[0] not in ['LLS', 'LRS', 'ALS', 'ARS', 'ROL', 'ROR', 'CMP']:
-            machineCode += "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))+ "{}".format(format(int(lineTokens[3][1]), '03b'))+ '0'
-        elif lineTokens[0] == 'CMP':
-            machineCode = '001111' + "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b')) + '0000'
-        else:
-            machineCode += "{}".format(format(int(lineTokens[1][1]), '03b')) +'000' + "{}".format(format(int(lineTokens[2][1]), '03b'))+'0'
-        print(machineCode)
+    if tokens[0] in ALU2Args.keys():
+        machineCode = ALU2Args[tokens[0]] + BIN(tokens[1][:1], 3) + BIN(0, 3) + BIN(tokens[2][:1], 3)
 
-    elif lineTokens[0] in memInstructions:
-        machineCode = '01'+ memOpcode[lineTokens[0]]+ '0'
-        if lineTokens[0] == 'LDI':
-            machineCode += "{}".format(format(int(lineTokens[1]), '08b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))
-        if lineTokens[0] == 'LDR' or lineTokens[0] == 'LD':
-            machineCode += '0'+ "{}".format(format(int(lineTokens[1][1]), '03b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))+ '0000'
-        if lineTokens[0] == 'ST':
-            machineCode += "{}".format(format(int(lineTokens[1]), '08b'))+ "{}".format(format(int(lineTokens[2][1]), '03b'))
-        print(machineCode)
+    elif tokens[0] in ALU3Args.keys():
+        machineCode = ALU3Args[tokens[0]] + BIN(tokens[1][1:], 3) + BIN(tokens[2][1:], 3) + BIN(tokens[3][1:], 3)
 
-    elif lineTokens[0] in branchInstructions:
-        machineCode = '10' + branchOpcode[lineTokens[0]] + "{}".format(format(labels.index(lineTokens[1]), '08b')) + '00'
-        print(machineCode)
-    elif lineTokens[0] == 'MOV':
-        machineCode = '11'+ "{}".format(format(int(lineTokens[1]), '07b'))+ "{}".format(format(int(lineTokens[2]), '07b'))
-        print(machineCode)
+    elif tokens[0] in memory.keys():
+        machineCode = memory[tokens[0]] + BIN(tokens[1], 8) + BIN(tokens[2][1:], 3)
+
+    elif tokens[0] in branch.keys():
+        machineCode = branch[tokens[0]] + BIN(labels[tokens[1]], 8)
+
+    elif tokens[0] == 'MOV':
+        machineCode = '11'+ BIN(tokens[1], 7) + BIN(tokens[2], 7)
+
+    elif tokens[0] in others.keys():
+        machineCode = others[tokens[0]] + BIN(tokens[1][1:], 3) + BIN(tokens[2][1:], 3)
+
+    else:
+        raise Exception(f'{tokens[0]}')
+
+    machineCode += '0' * (16 - len(machineCode)) # Fill the rest with zeros
 
     return machineCode
 
-ALUInstructions = ['ADD', 'SUB', 'ADDC', 'SUBC', 'XOR', 'AND', 'OR', 'NAND', 'LLS', 'LRS', 'ALS', 'ARS', 'ROL', 'ROR', 'MUL', 'CMP']
-ALUOpcode = {
-                'ADD'    :    '0000',
-                'SUB'    :    '0001',
-                'ADDC'   :    '0010',
-                'SUBC'   :    '0011',
-                'XOR'    :    '0100',
-                'AND'    :    '0101',
-                'OR'     :    '0110',
-                'NAND'   :    '0111',
-                'LLS'    :    '1000',
-                'LRS'    :    '1001',
-                'ALS'    :    '1010',
-                'ARS'    :    '1011',
-                'ROL'    :    '1100',
-                'ROR'    :    '1101',
-                'MUL'    :    '1110',
-                'CMP'    :    '1111'
-            }
+ALU3Args = {
+                'ADD'    :    '000000',
+                'SUB'    :    '000001',
+                'ADDC'   :    '000010',
+                'SUBC'   :    '000011',
+                'XOR'    :    '000100',
+                'AND'    :    '000101',
+                'OR'     :    '000110',
+                'NAND'   :    '000111',
+                'MUL'    :    '001110'}
 
-memInstructions = ['LDI', 'LDR', 'LD', 'ST']
-memOpcode = {
-                'LDI'   :   '00',
-                'LDR'   :   '01',
-                'LD'    :   '10',
-                'ST'    :   '11'
-            }
+ALU2Args = {
+                'LLS'    :    '001000',
+                'LRS'    :    '001001',
+                'ALS'    :    '001010',
+                'ARS'    :    '001011',
+                'ROL'    :    '001100',
+                'ROR'    :    '001101'}
 
-branchInstructions = ['JMP', 'JMPZC', 'JMPZS', 'JMPCC', 'JMPCS', 'JMPSC', 'JMPSS', 'JMPVC', 'JMPVS']
-branchOpcode = {
-                    'JMP'   :   '1000',
-                    'JMPZS' :   '0000',
-                    'JMPZC' :   '0001',
-                    'JMPCS' :   '0010',
-                    'JMPCC' :   '0011',
-                    'JMPSS' :   '0100',
-                    'JMPSC' :   '0101',
-                    'JMPVS' :   '0110',
-                    'JMPVC' :   '0111'
-               }
+memory = {
+                'LDI'   :   '01000',
+                'ST'    :   '01110'}
 
-def getLabel(line):
-    if ':' in line:
-        return line.split(':')[0]
-    else:
-        return
+branch = {
+                    'JMP'   :   '101000',
+                    'JMPZS' :   '100000',
+                    'JMPZC' :   '100001',
+                    'JMPCS' :   '100010',
+                    'JMPCC' :   '100011',
+                    'JMPSS' :   '100100',
+                    'JMPSC' :   '100101',
+                    'JMPVS' :   '100110',
+                    'JMPVC' :   '100111'}
 
-labels = []
-
-for line in ASMLines:
-    lineTokens = line.split()
-    lineLabel = getLabel(line)
-    if lineLabel:
-        labels.append(lineLabel)
-    else:
-        labels.append('~')
+others = {
+            'CMP':  '001111',
+            'LDR':  '010100',
+            'LD' :  '011000'}
 
 machineCodes = []
-for line in ASMLines:
-    print(line)
-    machineCodes.append(getMachineCode(line))
+for number, line in enumerate(ASMLines):
+    # print(line)
+    try:
+        machineCode = getMachineCode(line)
+    except Exception as e:
+        raise Exception(str(e) + ' in line ' + str(number + 1) + ' is not a valid instruction')
+    machineCodes.append(machineCode)
 
 with open('instructionMemory.txt', 'w') as f:
     for machineCode in machineCodes:
-        f.write(machineCode+'\n')
-    for i in range(0, 256-len(ASMLines)):
-        f.write('xxxxxxxxxxxxxxxx'+'\n')
+        f.write(machineCode + '\n')
+    f.write(('x' * 16 + '\n') * (256 - len(ASMLines))) # Fill rest with x
+    print('Code assebled succesfully')

@@ -48,8 +48,8 @@
 |CMP| CMP *Ra* *Rb* | **00** 1111|ALU| *001111* aaa bbb 0000|*Z = (a==b)?1:0*|
 |||||||
 |LDI|LDI *Value* *Rd*| **01** 00|Memory| *0100* 0 vvvvvvvv ddd | *Rd <--- Value*|
-|LDR|LDR *Rd* *Ra*| **01** 01|Memory| *0101* 0 ddd aaa 0000 | *Rd <--- Ra*|
-|LD|LD *Rd* *Ra*| **01** 10|Memory| *0110* 0 ddd aaa 0000 | *Rd <--- data[Ra]*|
+|LDR|LDR *Rd* *Ra*| **01** 01|Memory| *0101* 00 ddd aaa 0000 | *Rd <--- Ra*|
+|LD|LD *Rd* *Ra*| **01** 10|Memory| *0110* 00 ddd aaa 0000 | *Rd <--- data[Ra]*|
 |ST|ST *Loc* *Ra*| **01** 11|Memory| *0111* 0 llllllll aaa| *data[Loc] <--- Ra*|
 |||||||
 |JMP|JMP *label*|**10** 1000|Branch|*101000* llllllll 00|*Unconditional branch*|
