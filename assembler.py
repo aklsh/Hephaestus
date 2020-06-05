@@ -42,7 +42,7 @@ def getMachineCode(line):
         machineCode = others[tokens[0]] + BIN(tokens[1][1:], 3) + BIN(tokens[2][1:], 3)
 
     else:
-        raise Exception(f'{tokens[0]} is not a valid instruction')
+        raise Exception(f'{tokens[0]}')
 
     machineCode += '0' * (16 - len(machineCode)) # Fill the rest with zeros
 
@@ -88,11 +88,16 @@ others = {
             'LD' :  '011000'}
 
 machineCodes = []
-for line in ASMLines:
+for number, line in enumerate(ASMLines):
     # print(line)
-    machineCodes.append(getMachineCode(line))
+    try:
+        machineCode = getMachineCode(line)
+    except Exception as e:
+        raise Exception(str(e) + ' in line ' + str(number + 1) + ' is not a valid instruction')
+    machineCodes.append(machineCode)
 
 with open('instructionMemory.txt', 'w') as f:
     for machineCode in machineCodes:
         f.write(machineCode + '\n')
     f.write(('x' * 16 + '\n') * (256 - len(ASMLines))) # Fill rest with x
+    print('Code assebled succesfully')
