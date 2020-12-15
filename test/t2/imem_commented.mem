@@ -1,0 +1,17 @@
+00000fb3 //0  ADD R31,R0,R0            R31 => 0
+000140b7 //1  LUI R1,20                R1 => 00014000 (Hex)
+01400113 //2  ADDI R2,R0,20            R2 => 20
+02110663 //3  BEQ R1,R2 (14-3)*4 = 44 (Should not branch) 
+00004197 //4  AUIPC R3,4               R3 => 00004010 (Hex)
+02118263 //5  BEQ R3,R1 (14-5)*4 = 36 (Should not branch) 
+0080026f //6  JAL                      to instr 8, Store next PC value in R4 (Should skip next instr)
+00000e63 //7  BEQ R0,R0 (14-7)*4 = 28
+01C00293 //8  ADDI R5,R0,28            R5 => 28
+00521a63 //9  BNE R4,R5 (14-9)*4 = 20 (Should not branch)
+03100367 //10 JALR                     to instr 12, Should store next PC value in R6 (Should skip next instr)
+00000663 //11 BEQ R0,R0 (14-11)*4 = 12
+02c00393 //12 ADDI R7,R0,44            R7 => 44
+00638463 //13 BEQ R6,R7 (15-13)*4 = 8 (should branch and skip next instr)
+00100f93 //14 ADDI R31, R0, 1. FAIL
+
+//0->4->8->12->16->20->24->32->36->40->48->52->60->64....

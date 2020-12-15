@@ -1,0 +1,14 @@
+00100f93 //0  ADD R31,R0, 1
+00400113 //1  ADDI R2,R0,4         R2 => 4
+00314093 //2  XORI R1,R2,3         R1 => 7
+02208263 //3  BEQ R1,R2.    Jump to inst12. Offset = (12-3)*4 = 36
+00114863 //4  BLT R2,R1.    Jump to inst8. Offset = (8-4)*4 = 16 
+402081b3 //5  SUB R3,R1,R2.        R3 => 3 SHOULD NOT HAPPEN
+0030f0b3 //6  AND R1,R1,R3.        R1 => 3 SHOULD NOT HAPPEN
+00308a63 //7  BEQ R1,R3.    Jump to inst12. Offset = (12-7)*4 = 20 
+000001b3 //8  ADD R3,R0,R0.        R3 => 0
+00110033 //9  ADD R0,R2,R1.        R0 => SHOULD REMAIN 0
+00301463 //10 BNE R0,R3.    Jump to inst12. Offset = (12-10)*4 =8
+0001D463 //11 BGE R3,R0.    Jump to inst13. Offset = (13-11)*4 =8
+00000fb3 //12 ADD R31, R0, R0. FAIL
+00 //13
