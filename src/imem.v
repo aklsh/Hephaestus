@@ -11,7 +11,7 @@
 
 `timescale 1ns/1ps
 `ifndef TESTDIR
-  `define TESTDIR "."
+  `define TESTDIR "t1"
 `endif
 
 module imem ( input [31:0] iaddr,
@@ -38,7 +38,7 @@ module imem ( input [31:0] iaddr,
 
     // initialise memory
     initial
-        $readmemh({`TESTDIR,"/idata.mem"},mem);
+        $readmemh({"test/",`TESTDIR,"/idata.mem"},mem);
 
     // read instruction at required location
     assign idata = mem[iaddr[31:2]];

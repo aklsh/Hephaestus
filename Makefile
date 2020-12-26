@@ -3,35 +3,33 @@
 # Akilesh Kannan, 2020-12-15 14:35
 #
 
-# Add the following 'help' target to your Makefile
-# And add help text after each target name starting with '\#\#'
-# A category can be added with @category
+SRC = src/cpu.v src/alu32.v src/immGen.v src/control.v src/regfile.v
+TB = test/cpu_tb.v src/dmem.v src/imem.v
+TESTS = test
+CPU = build/singleCycle.v
+RANDINT = $(shell python -c 'from random import randint; print(randint(1,100)%3 + 1);' | sed s/\n//)
 
-HELP_FUN = \
-	%help; \
-	while(<>) { push @{$$help{$$2 // 'options'}}, [$$1, $$3] if /^(\w+)\s*:.*\#\#(?:@(\w+))?\s(.*)$$/ }; \
-	print "usage: make [target]\n\n"; \
-	for (keys %help) { \
-	print "$$_:\n"; $$sep = " " x (20 - length $$_->[0]); \
-	print "  $$_->[0]$$sep$$_->[1]\n" for @{$$help{$$_}}; \
-	print "\n"; }
+define TITLE
+------------------
+ Single-Cycle CPU
+------------------
+endef
+export TITLE
 
-help:           ##@miscellaneous Show this help.
-	@perl -e '$(HELP_FUN)' $(MAKEFILE_LIST)
+synth: $(CPU)
+	@mkdir synth
+	@cd synth
 
-# Everything below is an example
+test-random: $(CPU)
+	@iverilog -g2012 -DTESTDIR=\"t$(RANDINT)\" -o build/sCPU.o $(CPU) $(TB)
+	@vvp build/sCPU.o
+	@cat log/cpu_tb.log
 
-target00:       ##@foo This message will show up when typing 'make help'
-	@echo "does nothing"
+$(CPU): $(SRC)
+	@echo "$$TITLE"
+	@iverilog -g2012 -E -o$(CPU) $(SRC)
 
-target01:       ##@foo This message will also show up when typing 'make help'
-	@echo "does something"
-
-# Remember that targets can have multiple entries (if your target specifications are very long, etc.)
-target02:       ## This message will show up too!!!
-target02: target00 target01
-	@echo "does even more"
-
-
-multiCycle: ##@foo build multi-cycle cpu
-	@echo "yet to do"
+.PHONY: clean
+clean: 												## Remove the build and log files
+	rm -rf build/* log/* *.o
+	rm -f *.vcd

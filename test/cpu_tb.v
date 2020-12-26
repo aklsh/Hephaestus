@@ -10,7 +10,7 @@
 // which is the path to the files imem.mem, dmem0-3.mem and expout.mem
 // Test cases ensure the files are named appropriately
 `ifndef TESTDIR
-  `define TESTDIR "."
+  `define TESTDIR "t1"
 `endif
 
 module cpu_tb ();
@@ -51,17 +51,18 @@ module cpu_tb ();
     initial begin
 	// Uncomment below to dump out VCD file for gtkwave
 	// NOTE: This will NOT work on the jupyter terminal
-        // $dumpfile("cpu_tb.vcd");
-        // $dumpvars(0, cpu_tb);
-        // for(i=0;i<32;i=i+1)
-        //     $dumpvars(0, u1.rf.internalRegisters[i]);
-        $display("RUNNING TEST FROM ", `TESTDIR);
+    `ifdef DUMP_VCD
+        $dumpfile("log/cpu_tb.vcd");
+        $dumpvars(0, cpu_tb);
+        for(i=0;i<32;i=i+1)
+            $dumpvars(0, u1.rf.internalRegisters[i]);
+    `endif
         clk = 1;
         reset = 1;   // This is active high reset
         #100         // At least 100 because Xilinx assumes 100ns reset in post-syn sim
         reset = 0;   // Reset removed - normal functioning resumes
-        log_file = $fopen("cpu_tb.log", "a");
-        exp_file = $fopen({`TESTDIR,"/expout.txt"}, "r");
+        log_file = $fopen("log/cpu_tb.log", "a");
+        exp_file = $fopen({"test/",`TESTDIR,"/expout.txt"}, "r");
         @(posedge clk);
         for (i=0; i<1000; i=i+1) begin
             @(posedge clk);
@@ -79,9 +80,9 @@ module cpu_tb ();
         end
         if(fail != 0) begin
             $display("FAILED. %d registers do not match.\n", fail);
-            $fwrite(log_file, "FAIL\n");
+            $fwrite(log_file, `TESTDIR, ": FAIL\n");
         end else begin
-            $fwrite(log_file, "PASS\n");
+            $fwrite(log_file, `TESTDIR, ": PASS\n");
         end
         $finish;
     end

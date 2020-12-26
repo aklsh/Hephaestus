@@ -11,7 +11,7 @@
 `define DMEM_N_FILE(x,y) {x,y,".mem"}
 `define MEMTOP 4095
 `ifndef TESTDIR
-  `define TESTDIR "."
+  `define TESTDIR "t1"
 `endif
 
 module dmem ( input clk,                // clock input
@@ -47,7 +47,7 @@ module dmem ( input clk,                // clock input
     integer i;
 
     initial begin
-        $readmemh({`TESTDIR,"/idata.mem"}, memt);
+        $readmemh({"test/",`TESTDIR,"/idata.mem"}, memt);
         for (i=0; i<2372; i=i+1) begin
             mem0[i] = memt[i][ 7: 0];
             mem1[i] = memt[i][15: 8];
