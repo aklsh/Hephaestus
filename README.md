@@ -1,3 +1,5 @@
-# EE2003 - Final Project
+# Single Cycle RV32I CPU
 
-Dynamic Huffman Compression accelerator
+Done as part of EE2003: Computer Organisation
+
+_Also, a better version of Hephaestus :)_

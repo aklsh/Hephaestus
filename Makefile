@@ -4,7 +4,8 @@
 #
 
 SRC = src/cpu.v src/alu32.v src/immGen.v src/control.v src/regfile.v
-TB = test/cpu_tb.v src/dmem.v src/imem.v
+MEM = src/dmem.v src/imem.v
+TB = test/cpu_tb.v
 TESTS = test
 CPU = build/singleCycle.v
 RANDINT = $(shell python -c 'from random import randint; print(randint(1,100)%3 + 1);' | sed s/\n//)
@@ -16,17 +17,30 @@ define TITLE
 endef
 export TITLE
 
-synth: $(CPU)
-	@mkdir synth
+synth-vivado: $(CPU)
 	@cd synth
 
+synth-yosys:
+	@cd synth && yosys synth.ys
+
 test-random: $(CPU)
-	@iverilog -g2012 -DTESTDIR=\"t$(RANDINT)\" -o build/sCPU.o $(CPU) $(TB)
+	@echo "$$TITLE"
+	@iverilog -g2012 -DTESTDIR=\"t$(RANDINT)\" -o build/sCPU.o $(CPU) $(TB) $(MEM)
 	@vvp build/sCPU.o
 	@cat log/cpu_tb.log
 
-$(CPU): $(SRC)
+test-all: $(CPU)
 	@echo "$$TITLE"
+	@iverilog -g2012 -DTESTDIR=\"t1\" -o build/sCPU.o $(CPU) $(TB) $(MEM)
+	@vvp build/sCPU.o
+	@iverilog -g2012 -DTESTDIR=\"t2\" -o build/sCPU.o $(CPU) $(TB) $(MEM)
+	@vvp build/sCPU.o
+	@iverilog -g2012 -DTESTDIR=\"t3\" -o build/sCPU.o $(CPU) $(TB) $(MEM)
+	@vvp build/sCPU.o
+	@cat log/cpu_tb.log
+
+
+$(CPU): $(SRC)
 	@iverilog -g2012 -E -o$(CPU) $(SRC)
 
 .PHONY: clean
