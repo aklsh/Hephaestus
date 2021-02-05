@@ -1,5 +1,5 @@
 //**************************************************************
-// Assignment 5, 6
+// Single-Cycle RV32I CPU
 // File name: cpu.v
 // Last modified: 2020-09-30 12:07
 // Created by: Akilesh Kannan EE18B122
@@ -8,8 +8,6 @@
 //              - Supports Branch, Jump, PC Modification,
 //                Arithmetic and Logical Instructions specified
 //                in RV32I base instruction set
-// TODO: create a separate module for calculating the
-//       dwe and drdata_RF fields
 //**************************************************************
 
 module cpu ( input clk,             // clock signal

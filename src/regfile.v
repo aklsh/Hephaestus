@@ -1,5 +1,5 @@
 //**************************************************************
-// Assignment 3, 5, 6
+// Single-Cycle RV32I CPU
 // File name: regfile.v
 // Last modified: 2020-09-12 09:37
 // Created by: Akilesh Kannan EE18B122

@@ -1,7 +1,7 @@
 //***********************************************************************
-// Multi-Cycle CPU
+// Single-Cycle RV32I CPU
 // File name: alu32.v
-// Created by: Akilesh Kannan EE18B122, Sreekar Sai Ranganathan EE18B154
+// Created by: Akilesh Kannan EE18B122
 // Description: Arithmetic Logic Unit
 //              - Combinational Unit
 //              - Does all arithmetic ops - add, sub etc.

@@ -1,5 +1,5 @@
 //**************************************************************
-// Assignment 5, 6
+// Single-Cycle RV32I CPU
 // File name: control.v
 // Last modified: 2020-10-02 23:47
 // Created by: Akilesh Kannan EE18B122

@@ -1,5 +1,5 @@
 //**************************************************************
-// Assignment 5, 6, 7, 8
+// Single-Cycle RV32I CPU
 // File name: imem.v
 // Last modified: 2020-10-05 22:23
 // Created by: Akilesh Kannan EE18B122

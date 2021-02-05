@@ -1,5 +1,5 @@
 //**************************************************************
-// Assignment 5
+// Single-Cycle RV32I CPU
 // File name: immGen.v
 // Last modified: 2020-10-03 09:57
 // Created by: Akilesh Kannan EE18B122
