@@ -3,7 +3,7 @@
 # Akilesh Kannan, 2020-12-15 14:35
 #
 
-SRC = src/cpu.v src/alu32.v src/immGen.v src/control.v src/regfile.v
+SRC = src/cpu.v src/alu.v src/immGen.v src/control.v src/regfile.v
 MEM = src/dmem.v src/imem.v
 TB = test/cpu_tb.v
 TESTS = test

@@ -2,7 +2,7 @@
 // Single-Cycle RV32I CPU
 // File name: imem.v
 // Last modified: 2020-10-05 22:23
-// Created by: Akilesh Kannan EE18B122
+// Created by: Akilesh Kannan (aklsh@tuta.io)
 // Description: Instruction Memory Module
 //              - 32-bit instructions
 //              - Maximum of 4096 instructions
@@ -23,9 +23,9 @@ module imem ( input [31:0] iaddr,
 
     //////////////////////////////////////////////////////////////////
     // Instruction Memory is designed for 32-bit instructions
-    // -> 4K location, 16KB total
-    // -> the iaddr corresponds to byte number
-    // -> to get line number, remove last 2 bits
+    // · 4K location, 16KB total
+    // · the iaddr corresponds to byte number
+    // · to get line number, remove last 2 bits
     //
     //                Byte 0     Byte 1     Byte 2     Byte 3
     //             +----------+----------+----------+----------+

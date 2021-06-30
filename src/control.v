@@ -2,7 +2,7 @@
 // Single-Cycle RV32I CPU
 // File name: control.v
 // Last modified: 2020-10-02 23:47
-// Created by: Akilesh Kannan EE18B122
+// Created by: Akilesh Kannan (aklsh@tuta.io)
 // Description: CPU Control Module
 //              - Generates the control signals required
 //                by the ALU and REG-FILE
@@ -24,17 +24,6 @@ module control ( input [31:0] idata,    // instruction
     reg dMEMToReg_r, regOrImm_r, regWrite_r, branch_r, jump_r;
     reg [5:0] aluOp_r;
     reg [4:0] rs1_r, rs2_r, rd_r;
-
-    // localparam statements for opcodes
-    localparam LUI = 7'b0110111;
-    localparam AUIPC = 7'b0010111;
-    localparam JAL = 7'b1101111;
-    localparam JALR = 7'b1100111;
-    localparam BXX = 7'b1100011;
-    localparam LXX = 7'b0000011;
-    localparam SXX = 7'b0100011;
-    localparam IXX = 7'b0010011;
-    localparam RXX = 7'b0110011;
 
     always @(idata) begin
         case(idata[6:0])

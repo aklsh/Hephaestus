@@ -2,7 +2,7 @@
 // Single-Cycle RV32I CPU
 // File name: regfile.v
 // Last modified: 2020-09-12 09:37
-// Created by: Akilesh Kannan EE18B122
+// Created by: Akilesh Kannan (aklsh@tuta.io)
 // Description: Register File
 //              - 32, 32-bit internal registers
 //              - 2 read ports, 1 write port

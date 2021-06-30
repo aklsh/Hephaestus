@@ -2,13 +2,15 @@
 // Single-Cycle RV32I CPU
 // File name: cpu.v
 // Last modified: 2020-09-30 12:07
-// Created by: Akilesh Kannan EE18B122
+// Created by: Akilesh Kannan (aklsh@tuta.io)
 // Description: CPU Module
 //              - 32 bit CPU
 //              - Supports Branch, Jump, PC Modification,
 //                Arithmetic and Logical Instructions specified
 //                in RV32I base instruction set
 //**************************************************************
+
+`include "include/opcodes.v"
 
 module cpu ( input clk,             // clock signal
              input reset,           // reset signal (synchronous)
@@ -45,17 +47,6 @@ module cpu ( input clk,             // clock signal
     // dMEM-related ports
     reg [3:0] dwe_r;
     reg [31:0] maskedDWData_r;
-
-    // localparam statements for opcodes
-    localparam LUI = 7'b0110111;
-    localparam AUIPC = 7'b0010111;
-    localparam JAL = 7'b1101111;
-    localparam JALR = 7'b1100111;
-    localparam BXX = 7'b1100011;
-    localparam LXX = 7'b0000011;
-    localparam SXX = 7'b0100011;
-    localparam IXX = 7'b0010011;
-    localparam RXX = 7'b0110011;
 
     // PC calculations
     always @(posedge clk) begin
@@ -157,7 +148,7 @@ module cpu ( input clk,             // clock signal
     );
 
     // Instantiate ALU
-    alu32 alu(
+    alu alUnit(
         .op(op_ALU),
         .rv1(rv1_ALU),
         .rv2(rv2_ALU),

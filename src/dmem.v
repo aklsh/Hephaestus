@@ -2,7 +2,7 @@
 // Single-Cycle RV32I CPU
 // File name: dmem.v
 // Last modified: 2020-10-01 12:25
-// Created by: Akilesh Kannan EE18B122
+// Created by: Akilesh Kannan (aklsh@tuta.io)
 // Description: Data Memory
 // TODO: Parameterise line numbers and (word size?)
 //**************************************************************

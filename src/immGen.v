@@ -2,7 +2,7 @@
 // Single-Cycle RV32I CPU
 // File name: immGen.v
 // Last modified: 2020-10-03 09:57
-// Created by: Akilesh Kannan EE18B122
+// Created by: Akilesh Kannan (aklsh@tuta.io)
 // Description: Immediate Value Generator
 //              - Combinational Unit
 //              - Generates all immediate values from the
@@ -12,17 +12,6 @@
 module immGen ( input [31:0] idata,     // instruction
                 output [31:0] imm       // immediate value
               );
-
-    // localparam statements for opcodes
-    localparam LUI = 7'b0110111;
-    localparam AUIPC = 7'b0010111;
-    localparam JAL = 7'b1101111;
-    localparam JALR = 7'b1100111;
-    localparam BXX = 7'b1100011;
-    localparam LXX = 7'b0000011;
-    localparam SXX = 7'b0100011;
-    localparam IXX = 7'b0010011;
-    localparam RXX = 7'b0110011;
 
     // dummy register
     reg [31:0] imm_r;

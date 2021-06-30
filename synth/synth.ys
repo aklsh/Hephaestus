@@ -1,3 +1,3 @@
-read_verilog ../src/cpu.v ../src/alu32.v ../src/regfile.v ../src/control.v ../src/immGen.v
+read_verilog ../src/cpu.v ../src/alu.v ../src/regfile.v ../src/control.v ../src/immGen.v
 synth_xilinx -top cpu
 write_verilog cpu_synth.v
