@@ -10,7 +10,7 @@
 //                in RV32I base instruction set
 //**************************************************************
 
-`include "include/opcodes.v"
+`include "inc/opcodes.v"
 
 module cpu ( input clk,             // clock signal
              input reset,           // reset signal (synchronous)

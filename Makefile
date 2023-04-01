@@ -21,7 +21,7 @@ synth-vivado: $(CPU)
 	@cd synth
 
 synth-yosys:
-	@cd synth && yosys synth.ys
+	@yosys synth/synth.ys
 
 test-random: $(CPU)
 	@echo "$$TITLE"
